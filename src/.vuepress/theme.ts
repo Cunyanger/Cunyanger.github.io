@@ -10,38 +10,38 @@ export default hopeTheme({
     name: "Cunyanger",
     url: "https://cunyanger.github.io/blog/",
   },
-  logo: "/logo.png",
+  logo: "https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/ss0_bng.png",
 
   repo: "https://github.com/Cunyanger/blog",
 
   docsDir: "src",
 
+  
   // 导航栏
   navbar,
   navbarLayout: {
     start: ["Brand"],
     center: [],
-    end:["Links","Language", "Repo", "Outlook", "Search"]
+    end:["Links","Language", "Outlook", "Search"]
   },
 
   // 侧边栏
   sidebar,
 
   // 页脚
-  footer: "默认页脚",
+  footer: "一切将变得更好",
   displayFooter: true,
-
+  // 关闭github编辑链接
+  editLink: false,
   // 博客相关
   blog: {
     description: "拥有从来是侥幸，人生起落是无常",
     intro: "/intro.html",
     medias: {
-      Wechat: "https://example.com",
+      Wechat: "weixin://contacts/profile/cunyanger666",
       Gmail: "mailto:cunyanger@outlook.com",
       GitHub: "https://github.com/Cunyanger",
       Steam: "https://example.com",
-      
-      
     },
   },
 
@@ -138,7 +138,9 @@ export default hopeTheme({
   // 在这里配置主题提供的插件
   plugins: {
     blog: true,
-
+    slimsearch:{
+      indexContent: true
+    },
     // 启用之前需安装 @waline/client
     // 警告: 这是一个仅供演示的测试服务，在生产环境中请自行部署并使用自己的服务！
     // comment: {

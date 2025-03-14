@@ -1,11 +1,12 @@
 ---
 icon: mdi:account
-cover: 
+sidebar: false
+footer: false
+editLink: false
+cover:
 ---
 
 # 个人介绍
-
-
 
 ## 工作经历
 

@@ -8,19 +8,7 @@ tag:
   - Markdown
 ---
 
-# 布局
-
-```markdown
----
-title: 布局
-icon: object-group
-order: 2
-category:
-  - 指南
-tag:
-  - 布局
-
----
+## 布局
 
 布局包括:
 
@@ -43,9 +31,8 @@ tag:
 - [打印按钮](https://theme-hope.vuejs.press/guide/interface/others.html#打印按钮)
 
 你可以在主题选项和页面的 frontmatter 中自定义它们。
-```
 
-# Markdown
+## Markdown
 
 VuePress 主要从 Markdown 文件生成页面。因此，你可以使用它轻松生成文档或博客站点。
 
@@ -53,11 +40,11 @@ VuePress 主要从 Markdown 文件生成页面。因此，你可以使用它轻�
 
 <!-- more -->
 
-## Markdown 介绍
+### Markdown 介绍
 
 如果你是一个新手，还不会编写 Markdown，请先阅读 [Markdown 介绍](https://theme-hope.vuejs.press/zh/cookbook/markdown/) 和 [Markdown 演示](https://theme-hope.vuejs.press/zh/cookbook/markdown/demo.html)。
 
-## Markdown 配置
+### Markdown 配置
 
 VuePress 通过 Frontmatter 为每个 Markdown 页面引入配置。
 
@@ -67,17 +54,17 @@ Frontmatter 是 VuePress 中很重要的一个概念，请阅读 [Frontmatter �
 
 :::
 
-## Markdown 扩展
+### Markdown 扩展
 
 VuePress 会使用 [markdown-it](https://github.com/markdown-it/markdown-it) 来解析 Markdown 内容，因此可以借助于 markdown-it 插件来实现 [语法扩展](https://github.com/markdown-it/markdown-it#syntax-extensions) 。
 
-### VuePress 扩展
+#### VuePress 扩展
 
 为了丰富文档写作，VuePress 对 Markdown 语法进行了扩展。
 
 关于这些扩展，请阅读 [VuePress 中的 Markdown 扩展](https://theme-hope.vuejs.press/zh/cookbook/vuepress/markdown.html)。
 
-### 主题扩展
+##### 主题扩展
 
 通过 VuePress 插件，主题扩展了更多 Markdown 语法，提供更加丰富的写作功能。
 
@@ -131,7 +118,7 @@ $$
 
 [查看详情](https://theme-hope.vuejs.press/zh/guide/markdown/grammar/tasklist.html)
 
-### 图片增强
+#### 图片增强
 
 支持为图片设置颜色模式和大小。
 
@@ -361,7 +348,7 @@ npm i -D vuepress-theme-hope
 
 - [查看详情](https://theme-hope.vuejs.press/zh/guide/markdown/content/revealjs.html)
 
-# 布局与功能禁用
+## 布局与功能禁用
 
 ```markdown
 ---
@@ -409,7 +396,7 @@ backtotop: false
 - 返回顶部按钮
 ```
 
-# 加密
+## 加密
 
 ```markdown
 ---
@@ -424,9 +411,5 @@ tag:
 # 密码加密的文章
 
 实际的文章内容。
-
-段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字段落 1 文字。
-
-段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字段落 2 文字。
 ```
 
