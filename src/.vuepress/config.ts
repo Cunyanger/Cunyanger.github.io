@@ -4,7 +4,6 @@ import theme from "./theme.js";
 
 export default defineUserConfig({
   base: "/",
-
   lang: "zh-CN",
   title: "Yanger's Blog",
   description: "阿阳妙妙屋",

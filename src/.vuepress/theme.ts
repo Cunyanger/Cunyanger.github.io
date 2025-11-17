@@ -4,15 +4,18 @@ import navbar from "./navbar.js";
 import sidebar from "./sidebar.js";
 
 export default hopeTheme({
-  hostname: "https://cunyanger.github.io/blog/",
+  // hostname: "https://cunyanger.github.io/blog/",
+  hostname: "https://blog.982345.xyz",
   favicon:"/favicon.svg",
   author: {
     name: "Cunyanger",
-    url: "https://cunyanger.github.io/blog/",
+    // url: "https://cunyanger.github.io/blog/",
+    url: "https://blog.982345.xyz",
   },
   logo: "https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/ss0_bng.png",
 
-  repo: "https://github.com/Cunyanger/blog",
+  // repo: "https://github.com/Cunyanger/blog",
+  repo: "https://blog.982345.xyz",
 
   docsDir: "src",
 
