@@ -100,7 +100,22 @@ contributors: false
 | https://www.ncat21.com/                       | 网飞猫                    |
 | ~~[方格音乐](http://fonger.top/)~~            | ~~音乐~~                  |
 
+
+
+| MAC 破解 APP                                                 |          |
+| ------------------------------------------------------------ | -------- |
+| [appstorrent.org](https://appstorrent.org/)                  |          |
+| [MacWk - 精品mac软件下载](https://www.macwk.com/)            |          |
+| [MacKed - 专注于Mac破解资源的分享与下载](https://macked.app/) |          |
+| [马可菠萝 - 分享你喜欢的MAC应用](https://www.macbl.com/)     |          |
+| [Indie Goodies](https://indiegoodies.com/)                   | 开源软件 |
+| [Mac软件之家 - 精选Mac软件Mac游戏Mac壁纸下载](https://www.macapp.org/) |          |
+
+
+
 ---
+
+
 
 # 必备软件
 
