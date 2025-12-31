@@ -46,7 +46,7 @@ contributors: false
 
 ---
 
-## 善用工具才得以逃脱诸般牢笼
+## 
 
 | 工具类                                                       |                      |
 | ------------------------------------------------------------ | -------------------- |
@@ -92,13 +92,18 @@ contributors: false
 
 ## 不要忘记享受世界
 
-| 影音类                                        |                           |
-| --------------------------------------------- | ------------------------- |
-| https://www.gyg.la/                           | 观影（原无名小站）        |
-| http://www.wmdz.com                           | 电视盒子 APP              |
-| https://sway.cloud.microsoft/1zyVegf0n3cHdR8o | Switch520(老佛爷付过钱了) |
-| https://www.ncat21.com/                       | 网飞猫                    |
-| ~~[方格音乐](http://fonger.top/)~~            | ~~音乐~~                  |
+| 影音类                  |                    |
+| ----------------------- | ------------------ |
+| https://www.gyg.la/     | 观影（原无名小站） |
+| http://www.wmdz.com     | 电视盒子 APP       |
+| https://www.ncat21.com/ | 网飞猫             |
+
+
+
+| 游戏类                                                       |                           |
+| ------------------------------------------------------------ | ------------------------- |
+| https://sway.cloud.microsoft/1zyVegf0n3cHdR8o                | Switch520(老佛爷付过钱了) |
+| [dyang886/Game-Cheats-Manager: Easily download and manage single-player game cheats for your convenience](https://github.com/dyang886/Game-Cheats-Manager) | Game Cheats Manager       |
 
 
 
