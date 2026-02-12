@@ -4,19 +4,14 @@ import navbar from "./navbar.js";
 import sidebar from "./sidebar.js";
 
 export default hopeTheme({
-  // hostname: "https://cunyanger.github.io/blog/",
   hostname: "https://blog.982345.xyz",
   favicon:"/favicon.svg",
   author: {
     name: "Cunyanger",
-    // url: "https://cunyanger.github.io/blog/",
     url: "https://blog.982345.xyz",
   },
   logo: "https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/ss0_bng.png",
-
-  // repo: "https://github.com/Cunyanger/blog",
   repo: "https://blog.982345.xyz",
-
   docsDir: "src",
 
   
@@ -44,7 +39,7 @@ export default hopeTheme({
       Wechat: "weixin://contacts/profile/cunyanger666",
       Gmail: "mailto:cunyanger@outlook.com",
       GitHub: "https://github.com/Cunyanger",
-      Steam: "https://example.com",
+      Steam: "https://steamcommunity.com/id/cunyanger/",
     },
   },
 
@@ -141,9 +136,7 @@ export default hopeTheme({
   // 在这里配置主题提供的插件
   plugins: {
     blog: true,
-    slimsearch:{
-      indexContent: true
-    },
+    // slimsearch: true,
     // 启用之前需安装 @waline/client
     // 警告: 这是一个仅供演示的测试服务，在生产环境中请自行部署并使用自己的服务！
     // comment: {
