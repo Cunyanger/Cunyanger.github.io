@@ -85,12 +85,11 @@ background="rgba(45, 46, 47, 0.15)"
 ## 🛫机场加速
 
 <div class="vp-card-container">
-
 <VPCard  
 title="赔钱机场"  
 desc="赔钱机场最便宜，小号七折返利"  
 logo="https://f0.anyknew.com/static/anyknew-b.png"  
-link="https://xn--cp3a08l.com/#/register?code=ITmK6tPr"  
+link="https://www.xn--mes358aby2apfg.site/register?code=ITmK6tPr"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -404,19 +403,12 @@ background="rgba(45, 46, 47, 0.15)"
 ## 🎮游戏
 
 <div class="vp-card-container">
- <VPCard  
+
+<VPCard  
 title="Switch520"  
-desc="最新Netflix新剧_韩国电影免费在线观看"
+desc="PC、SWITCH破解游戏下载"
 logo="https://1ktools.com/api/tools/favicon?domain=ncat21.com"  
 link="https://sway.cloud.microsoft/1zyVegf0n3cHdR8o"  
-background="rgba(45, 46, 47, 0.15)" 
-/>
-
- <VPCard  
-title="Game-Cheats-Manager"  
-desc="Easily download and manage single-player game cheats for your convenience 破解Wemod、风灵月影修改器下载管理"
-logo="https://1ktools.com/api/tools/favicon?domain=github.com"  
-link="https://github.com/dyang886/Game-Cheats-Manager"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -425,6 +417,30 @@ title="ns中文网"
 desc="switch游戏下载,网盘下载,NSP-XCI汉化破解游戏下载,金手指存档"
 logo="https://1ktools.com/api/tools/favicon?domain=ns211.com"  
 link="https://www.ns211.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+ <VPCard  
+title="Game-Zone Labs"  
+desc="Easily download and manage single-player game cheats for your convenience 破解Wemod、风灵月影修改器下载管理"
+logo="https://1ktools.com/api/tools/favicon?domain=gamezonelabs.com"  
+link="https://gamezonelabs.com/products/game-cheats-manager"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+ <VPCard  
+title="Nexus Mods"  
+desc="Nexus Mods - Mods and Community，游戏MOD下载"
+logo="https://1ktools.com/api/tools/favicon?domain=nexusmods.com"  
+link="https://www.nexusmods.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+ <VPCard  
+title="非线性列车"  
+desc="游戏DLC补丁，正版本体可打补丁"
+logo="https://1ktools.com/api/tools/favicon?domain=q.juij.fun"  
+link="https://q.juij.fun/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
