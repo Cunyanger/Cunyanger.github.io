@@ -12,8 +12,7 @@ category:
   - 导航
 # 一个页面可以有多个标签
 tag:
-  - 页面配置
-  - 使用指南
+  - 网站导航
 # 此页面会在文章列表置顶
 sticky: true
 sidebar: false
@@ -88,7 +87,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
 title="赔钱机场"  
 desc="赔钱机场最便宜，小号七折返利"  
-logo="https://f0.anyknew.com/static/anyknew-b.png"  
+logo="https://www.赔钱机场.site/document/icon/logo.png"  
 link="https://www.xn--mes358aby2apfg.site/register?code=ITmK6tPr"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -96,7 +95,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
 title="魔戒"  
 desc="比较稳定，包流量"  
-logo="https://f0.anyknew.com/static/mojie.app"  
+logo="https://mojie.app/favicon.ico"  
 link="https://mojie.app/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -156,20 +155,19 @@ background="rgba(45, 46, 47, 0.15)"
 ## 🛠️工具
 
 <div class="vp-card-container">
-
 <VPCard  
-title="Pixpin"  
-desc="截图/贴图/长截图/图片转文字(OCR) "  
-logo="https://pixpin.cn/images/logo/1024.png"  
-link="https://pixpinapp.com/"  
+title="Rufus"
+desc="轻松创建 USB 启动盘"
+logo="https://1ktools.com/api/tools/favicon?domain=rufus.ie"  
+link="https://rufus.ie/zh/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
-title="北京时间"  
-desc="相对比较准确的北京时间，抢券抢票"  
-logo="https://1ktools.com/api/tools/favicon?domain=beijingtime.com.cn"  
-link="https://www.beijingtime.com.cn/"  
+title="FirPE"
+desc="目前最最好用的第三方WinPE"
+logo="https://1ktools.com/api/tools/favicon?domain=firpe.cn"  
+link="https://www.firpe.cn/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -178,30 +176,6 @@ title="NEXT, ITELLYOU"
 desc="系统官方镜像下载，提供可靠的原版软件"  
 logo="https://1ktools.com/api/tools/favicon?domain=next.itellyou.cn"  
 link="https://next.itellyou.cn/"  
-background="rgba(45, 46, 47, 0.15)" 
-/>
-
-<VPCard  
-title="油猴脚本"  
-desc="浏览器JS脚本扩展"
-logo="https://1ktools.com/api/tools/favicon?domain=greasyfork.org"  
-link="https://greasyfork.org/zh-CN"  
-background="rgba(45, 46, 47, 0.15)" 
-/>
-
-<VPCard  
-title="PicList"  
-desc="图片上传、云存储管理，PicGo 升级版"
-logo="https://1ktools.com/api/tools/favicon?domain=piclist.cn"  
-link="https://piclist.cn/"  
-background="rgba(45, 46, 47, 0.15)" 
-/>
-
-<VPCard  
-title="voidtools"  
-desc="Everything 基于名称快速定位文件和文件夹。"
-logo="https://1ktools.com/api/tools/favicon?domain=voidtools.com"  
-link="https://www.voidtools.com/zh-cn/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -216,10 +190,58 @@ background="rgba(45, 46, 47, 0.15)"
 
 
 <VPCard  
+title="Pixpin"  
+desc="截图/贴图/长截图/图片转文字(OCR) "  
+logo="https://pixpin.cn/images/logo/1024.png"  
+link="https://pixpinapp.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="油猴脚本"  
+desc="浏览器JS脚本扩展"
+logo="https://1ktools.com/api/tools/favicon?domain=greasyfork.org"  
+link="https://greasyfork.org/zh-CN"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="北京时间"  
+desc="相对比较准确的北京时间，抢券抢票"  
+logo="https://1ktools.com/api/tools/favicon?domain=beijingtime.com.cn"  
+link="https://www.beijingtime.com.cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="PicList"  
+desc="图片上传、云存储管理，PicGo 升级版"
+logo="https://1ktools.com/api/tools/favicon?domain=piclist.cn"  
+link="https://piclist.cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="Everything"
+desc="Everything 基于名称快速定位文件和文件夹。"
+logo="https://1ktools.com/api/tools/favicon?domain=voidtools.com"  
+link="https://www.voidtools.com/zh-cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
 title="WizTree"  
 desc="The Fastest Disk Space Analyzer 电脑磁盘空间分析软件"
 logo="https://1ktools.com/api/tools/favicon?domain=diskanalyzer.com"  
 link="https://www.diskanalyzer.com"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="豪猪接码"  
+desc="接码平台"
+logo="https://1ktools.com/api/tools/favicon?domain=h5.haozhuma.com"  
+link="https://h5.haozhuma.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -373,11 +395,10 @@ background="rgba(45, 46, 47, 0.15)"
 ## 📽️影音
 
 <div class="vp-card-container">
-
 <VPCard  
 title="观影 GYING"  
-desc="免费视频网站，内容发布地址：https://www.gying.page/"
-logo="https://1ktools.com/api/tools/favicon?domain=www.gyg.la"  
+desc="免费视频网站，内容发布地址：https://www.gying.page/，原名片库网（无名小站）"
+logo="https://www.gyg.la/favicon.png"  
 link="https://www.gyg.la/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -393,7 +414,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
 title="网飞猫"  
 desc="最新Netflix新剧_韩国电影免费在线观看"
-logo="https://1ktools.com/api/tools/favicon?domain=ncat21.com"  
+logo="https://www.ncat21.com/favicon.png"  
 link="https://www.ncat21.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -403,11 +424,10 @@ background="rgba(45, 46, 47, 0.15)"
 ## 🎮游戏
 
 <div class="vp-card-container">
-
 <VPCard  
 title="Switch520"  
 desc="PC、SWITCH破解游戏下载"
-logo="https://1ktools.com/api/tools/favicon?domain=ncat21.com"  
+logo="https://www.gamer520.com/favicon.png"  
 link="https://sway.cloud.microsoft/1zyVegf0n3cHdR8o"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -439,7 +459,7 @@ background="rgba(45, 46, 47, 0.15)"
  <VPCard  
 title="非线性列车"  
 desc="游戏DLC补丁，正版本体可打补丁"
-logo="https://1ktools.com/api/tools/favicon?domain=q.juij.fun"  
+logo="https://q.juij.fun/icon/icon192.webp"  
 link="https://q.juij.fun/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -469,7 +489,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="MacKed"  
   desc="专注于 Mac 破解资源的分享与下载"
-  logo="https://macked.app/favicon.ico"  
+  logo="https://macked.app/wp-content/uploads/favicon.png"  
   link="https://macked.app/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -477,7 +497,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="马可菠萝"  
   desc="分享你喜欢的 MAC 应用"
-  logo="https://www.macbl.com/favicon.ico"  
+  logo="https://macbl01.skqandroid.com/images/favicon.ico"  
   link="https://www.macbl.com/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
