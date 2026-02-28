@@ -135,7 +135,7 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
 <VPCard  
-title="Watt Toolkit"  
+title="Watt Toolkit（Steam++）"  
 desc="瓦特工具箱，支持多平台加速"  
 logo="https://steampp.net/favicon.ico"  
 link="https://steampp.net/"  
