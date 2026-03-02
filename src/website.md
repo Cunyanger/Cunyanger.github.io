@@ -198,6 +198,14 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
 <VPCard  
+title="Autologon - Sysinternals"  
+desc="微软官方Windosw开机密码跳过工具"
+logo="https://learn.microsoft.com/zh-cn/sysinternals/downloads/media/shared/download_sm.png"  
+link="https://learn.microsoft.com/zh-cn/sysinternals/downloads/autologon"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
 title="联想应用商店"  
 desc="PC应用下载安装，与火绒同款"
 logo="https://lestore.lenovo.com/favicon.ico"  
@@ -226,6 +234,14 @@ title="北京时间"
 desc="相对比较准确的北京时间，抢券抢票"  
 logo="https://1ktools.com/api/tools/favicon?domain=beijingtime.com.cn"  
 link="https://www.beijingtime.com.cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="LocalSend"  
+desc="局域网文件传输，Windows、IOS、Android跨平台传输"
+logo="https://1ktools.com/api/tools/favicon?domain=localsend.org"  
+link="https://localsend.org/zh-CN"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -443,7 +459,6 @@ logo="https://www.gamer520.com/favicon.png"
 link="https://sway.cloud.microsoft/1zyVegf0n3cHdR8o"  
 background="rgba(45, 46, 47, 0.15)" 
 />
-
  <VPCard  
 title="ns中文网"  
 desc="switch游戏下载,网盘下载,NSP-XCI汉化破解游戏下载,金手指存档"
@@ -453,8 +468,16 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
  <VPCard  
+title="Byrutor"  
+desc="俄罗斯最大游戏破解资源站"
+logo="https://byrutgame.org/favicon.png"  
+link="https://byrutgame.org/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+ <VPCard  
 title="Game-Zone Labs"  
-desc="Easily download and manage single-player game cheats for your convenience 破解Wemod、风灵月影修改器下载管理"
+desc="游戏修改器集合平台"
 logo="https://1ktools.com/api/tools/favicon?domain=gamezonelabs.com"  
 link="https://gamezonelabs.com/products/game-cheats-manager"  
 background="rgba(45, 46, 47, 0.15)" 
