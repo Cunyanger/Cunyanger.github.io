@@ -107,6 +107,9 @@ hello maven！
 
 <https://maven.apache.org/download.cgi>
 
+[apache-maven安装包下载-开源镜像站-阿里云](https://mirrors.aliyun.com/apache/maven/?spm=a2c6h.25603864.0.0.4c993b952we6eM)
+
+
 ![[_Annex/09c1d0922960207636654ed5d67f4c20_MD5.png]]
 
 解压到创建的环境的文件夹
@@ -119,6 +122,8 @@ hello maven！
 
 #### 验证maven是否正常
 
+`mvn -v` 输出 maven 的版本号信息
+
 ```shell
 C:\Users\Think>mvn -v
 Apache Maven 3.6.2 (40f52333136460af0dc0d7232c0dc0bcf0d9e117; 2019-08-27T23:06:16+08:00)
@@ -128,8 +133,6 @@ Default locale: zh_CN, platform encoding: GBK
 OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
 ```
 
-`mvn -v`输出maven的版本号信息，若输出和上面类似，那么恭喜你，maven安装成功!
-
 ## Maven配置
 
 修改jar包的存放地址
@@ -138,75 +141,124 @@ OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
 
 #### 启动文件设置
 
-后面会用到`~`这个符号，先对这个符号做一下说明，这个符号表示当前用户的目录
+>  后面会用到 `~` 这个符号，先对这个符号做一下说明，这个符号表示当前用户的目录
+>  window中默认在 `C:\Users\用户名`
+>  linux root用户默认在/root目录，其他用户的~对应/home/用户名
 
-window中默认在C:\Users\用户名
-
-linux root用户默认在/root目录，其他用户的~对应/home/用户名
-
-`mvn` 运行的时候，会加载启动的配置文件 `settings.xml`，这个文件默认在 `MAVEN_HOME/conf` 目录，一般我们会拷贝一个放在 `~/.m2` 目录中，Maven的conf内的是全局范围的配置文件，整个机器上所有用户都会受到该配置的影响，而.m2是用户范围级别的，只有当前用户才会受到该配置的影响。推荐使用用户级别的，将其放在 `~/.m2` 目录，而不去使用全局的配置，以免影响到其他用户的使用。还有这样使用方便日后maven版本升级，一般情况下maven整个安装目录我们都不要去动，升级的时候只需要替换一下安装文件就可以了
+`mvn` 运行的时候，会加载启动的配置文件 `settings.xml`，这个文件默认在 `MAVEN_HOME/conf` 目录
+一般会拷贝一个放在 `~/.m2` 目录中，Maven的conf内的是全局范围的配置文件，整个机器上所有用户都会受到该配置的影响，而.m2是用户范围级别的，只有当前用户才会受到该配置的影响。推荐使用用户级别，以免影响到其他用户的使用。还有这样使用方便日后maven版本升级，一般情况下maven整个安装目录我们都不要去动，升级的时候只需要替换一下安装文件就可以了
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
-          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
-                              https://maven.apache.org/xsd/settings-1.0.0.xsd">
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <!-- 本地仓库位置（可选，建议明确） -->
+  <localRepository>F:\Environment\Maven\.m2\repository</localRepository>
 
-    <!-- 本地仓库位置（可选，建议明确） -->
-    <localRepository>D:\Enviroment\Maven\apache-maven-3.9.9\repository</localRepository>
+  <!-- pluginGroups
+  | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
+  | when invoking a command line like "mvn prefix:goal". Maven will automatically add the group identifiers
+  | "org.apache.maven.plugins" and "org.codehaus.mojo" if these are not already contained in the list.
+  |-->
+  <pluginGroups>
+    <!-- pluginGroup
+     | Specifies a further group identifier to use for plugin lookup.
+    <pluginGroup>com.your.plugins</pluginGroup>
+    -->
+  </pluginGroups>
 
-    <mirrors>
-        <mirror>
-            <id>aliyun-maven</id>
-            <mirrorOf>central</mirrorOf>
-            <name>Aliyun Maven Central</name>
-            <url>https://maven.aliyun.com/repository/central</url>
-        </mirror>
-    </mirrors>
+  <!-- TODO Since when can proxies be selected as depicted? -->
+  <!-- proxies
+   | This is a list of proxies which can be used on this machine to connect to the network.
+   | Unless otherwise specified (by system property or command-line switch), the first proxy
+   | specification in this list marked as active will be used.
+   |-->
+  <proxies>
+    <!-- proxy
+     | Specification for one proxy, to be used in connecting to the network.
+     |
+    <proxy>
+      <id>optional</id>
+      <active>true</active>
+      <protocol>http</protocol>
+      <username>proxyuser</username>
+      <password>proxypass</password>
+      <host>proxy.host.net</host>
+      <port>80</port>
+      <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
+    </proxy>
+    -->
+  </proxies>
 
-    <profiles>
-        <profile>
-            <id>aliyun</id>
-            <repositories>
-                <repository>
-                    <id>central</id>
-                    <url>https://maven.aliyun.com/repository/central</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </repository>
-            </repositories>
+  <!-- servers
+   | This is a list of authentication profiles, keyed by the server-id used within the system.
+   | Authentication profiles can be used whenever maven must make a connection to a remote server.
+   |-->
+  <servers>
+    <!-- server
+     | Specifies the authentication information to use when connecting to a particular server, identified by
+     | a unique name within the system (referred to by the 'id' attribute below).
+     |
+     | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are
+     |       used together.
+     |
+    <server>
+      <id>deploymentRepo</id>
+      <username>repouser</username>
+      <password>repopwd</password>
+    </server>
+    -->
 
-            <pluginRepositories>
-                <pluginRepository>
-                    <id>central</id>
-                    <url>https://maven.aliyun.com/repository/central</url>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-    </profiles>
+    <!-- Another sample, using keys to authenticate.
+    <server>
+      <id>siteServer</id>
+      <privateKey>/path/to/private/key</privateKey>
+      <passphrase>optional; leave empty if not used.</passphrase>
+    </server>
+    -->
+  </servers>
+  <mirrors>
+   <mirror>
+			<id>aliyunmaven</id>
+             <mirrorOf>central</mirrorOf>
+             <name>aliyun central maven</name>
+             <url>https://maven.aliyun.com/repository/central</url>
+		 </mirror>
+  </mirrors>
 
-    <activeProfiles>
-        <activeProfile>aliyun</activeProfile>
-    </activeProfiles>
+  <profiles>
+         <!-- java版本 --> 
+     <profile>
+           <id>jdk-17</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+               <jdk>17</jdk>
+           </activation>
+ 
+           <properties>
+               <maven.compiler.source>17</maven.compiler.source>
+               <maven.compiler.target>17</maven.compiler.target>
+               <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
+           </properties>
+     </profile>
+     
+  </profiles>
 
+  <!-- activeProfiles
+   | List of profiles that are active for all builds.
+   |
+  <activeProfiles>
+    <activeProfile>alwaysActiveProfile</activeProfile>
+    <activeProfile>anotherAlwaysActiveProfile</activeProfile>
+  </activeProfiles>
+  -->
 </settings>
-
 ```
 
 #### 配置本地缓存目录
 
-settings.xml中有个`localRepository`标签，可以设置本地缓存目录，maven从远程仓库下载下来的插件以及以后所有我们用到的jar包都会放在这个目录中，如下：
+settings.xml中的 `localRepository` 标签，可以设置本地缓存目录，maven从远程仓库下载下来的插件以及以后所有我们用到的jar包都会放在这个目录中，如下：
 
 ```
 <localRepository>C:/Users/Think/.m1/repository</localRepository>
@@ -304,7 +356,7 @@ Progress (1): 153 kB
 
 上面运行`mvn help:system`命令之后，好像从`https://repo.maven.apache.org`站点中在下载很多东西，最后又输出了系统所有环境变量的信息。
 
-我们来详细看一下`mvn help:system`这个命令的运行过程：
+`mvn help:system`命令的运行过程：
 
 1. 运行`mvn help:system`之后
 2. 系统会去环境变量PATH对应的所有目录中寻找mvn命令，然后在`D:\installsoft\maven\apache-maven-3.6.2\bin`中找到了可执行的`mvn`文件
@@ -321,7 +373,7 @@ Progress (1): 153 kB
 
 上面这种会输出插件的帮助文档，来感受一个：
 
-```
+```sh
 C:\Users\Think>mvn clean:help
 [INFO] Scanning for projects...
 [INFO]
@@ -362,292 +414,4 @@ clean:help
 [INFO] Finished at: 2019-11-01T17:59:04+08:00
 [INFO] Final Memory: 15M/487M
 [INFO] ------------------------------------------------------------------------
-```
-
-## 配置文件
-
-3.9.6
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-Licensed to the Apache Software Foundation (ASF) under one
-or more contributor license agreements.  See the NOTICE file
-distributed with this work for additional information
-regarding copyright ownership.  The ASF licenses this file
-to you under the Apache License, Version 2.0 (the
-"License"); you may not use this file except in compliance
-with the License.  You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
--->
-
-<!--
-| This is the configuration file for Maven. It can be specified at two levels:
-|
-|  1. User Level. This settings.xml file provides configuration for a single user,
-|                 and is normally provided in ${user.home}/.m2/settings.xml.
-|
-|                 NOTE: This location can be overridden with the CLI option:
-|
-|                 -s /path/to/user/settings.xml
-|
-|  2. Global Level. This settings.xml file provides configuration for all Maven
-|                 users on a machine (assuming they're all using the same Maven
-|                 installation). It's normally provided in
-|                 ${maven.conf}/settings.xml.
-|
-|                 NOTE: This location can be overridden with the CLI option:
-|
-|                 -gs /path/to/global/settings.xml
-|
-| The sections in this sample file are intended to give you a running start at
-| getting the most out of your Maven installation. Where appropriate, the default
-| values (values used when the setting is not specified) are provided.
-|
-|-->
-<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
-  <!-- localRepository
-  | The path to the local repository maven will use to store artifacts.
-  |
-  | Default: ${user.home}/.m2/repository
-  <localRepository>/path/to/local/repo</localRepository>
-  -->
-  <localRepository>F:\Environment\Maven\.m2\repository</localRepository>
-
-  <!-- interactiveMode
-  | This will determine whether maven prompts you when it needs input. If set to false,
-  | maven will use a sensible default value, perhaps based on some other setting, for
-  | the parameter in question.
-  |
-  | Default: true
-  <interactiveMode>true</interactiveMode>
-  -->
-
-  <!-- offline
-  | Determines whether maven should attempt to connect to the network when executing a build.
-  | This will have an effect on artifact downloads, artifact deployment, and others.
-  |
-  | Default: false
-  <offline>false</offline>
-  -->
-
-  <!-- pluginGroups
-  | This is a list of additional group identifiers that will be searched when resolving plugins by their prefix, i.e.
-  | when invoking a command line like "mvn prefix:goal". Maven will automatically add the group identifiers
-  | "org.apache.maven.plugins" and "org.codehaus.mojo" if these are not already contained in the list.
-  |-->
-  <pluginGroups>
-    <!-- pluginGroup
-     | Specifies a further group identifier to use for plugin lookup.
-    <pluginGroup>com.your.plugins</pluginGroup>
-    -->
-  </pluginGroups>
-
-  <!-- TODO Since when can proxies be selected as depicted? -->
-  <!-- proxies
-   | This is a list of proxies which can be used on this machine to connect to the network.
-   | Unless otherwise specified (by system property or command-line switch), the first proxy
-   | specification in this list marked as active will be used.
-   |-->
-  <proxies>
-    <!-- proxy
-     | Specification for one proxy, to be used in connecting to the network.
-     |
-    <proxy>
-      <id>optional</id>
-      <active>true</active>
-      <protocol>http</protocol>
-      <username>proxyuser</username>
-      <password>proxypass</password>
-      <host>proxy.host.net</host>
-      <port>80</port>
-      <nonProxyHosts>local.net|some.host.com</nonProxyHosts>
-    </proxy>
-    -->
-  </proxies>
-
-  <!-- servers
-   | This is a list of authentication profiles, keyed by the server-id used within the system.
-   | Authentication profiles can be used whenever maven must make a connection to a remote server.
-   |-->
-  <servers>
-    <!-- server
-     | Specifies the authentication information to use when connecting to a particular server, identified by
-     | a unique name within the system (referred to by the 'id' attribute below).
-     |
-     | NOTE: You should either specify username/password OR privateKey/passphrase, since these pairings are
-     |       used together.
-     |
-    <server>
-      <id>deploymentRepo</id>
-      <username>repouser</username>
-      <password>repopwd</password>
-    </server>
-    -->
-
-    <!-- Another sample, using keys to authenticate.
-    <server>
-      <id>siteServer</id>
-      <privateKey>/path/to/private/key</privateKey>
-      <passphrase>optional; leave empty if not used.</passphrase>
-    </server>
-    -->
-  </servers>
-
-  <!-- mirrors
-   | This is a list of mirrors to be used in downloading artifacts from remote repositories.
-   |
-   | It works like this: a POM may declare a repository to use in resolving certain artifacts.
-   | However, this repository may have problems with heavy traffic at times, so people have mirrored
-   | it to several places.
-   |
-   | That repository definition will have a unique id, so we can create a mirror reference for that
-   | repository, to be used as an alternate download site. The mirror site will be the preferred
-   | server for that repository.
-   |-->
-  <mirrors>
-    <!-- mirror
-     | Specifies a repository mirror site to use instead of a given repository. The repository that
-     | this mirror serves has an ID that matches the mirrorOf element of this mirror. IDs are used
-     | for inheritance and direct lookup purposes, and must be unique across the set of mirrors.
-     |
-    <mirror>
-      <id>mirrorId</id>
-      <mirrorOf>repositoryId</mirrorOf>
-      <name>Human Readable Name for this Mirror.</name>
-      <url>http://my.repository.com/repo/path</url>
-    </mirror>
-     -->
-   <mirror>
-			<id>aliyunmaven</id>
-             <mirrorOf>central</mirrorOf>
-             <name>aliyun central maven</name>
-             <url>https://maven.aliyun.com/repository/central</url>
-		 </mirror>
-  </mirrors>
-
-  <!-- profiles
-   | This is a list of profiles which can be activated in a variety of ways, and which can modify
-   | the build process. Profiles provided in the settings.xml are intended to provide local machine-
-   | specific paths and repository locations which allow the build to work in the local environment.
-   |
-   | For example, if you have an integration testing plugin - like cactus - that needs to know where
-   | your Tomcat instance is installed, you can provide a variable here such that the variable is
-   | dereferenced during the build process to configure the cactus plugin.
-   |
-   | As noted above, profiles can be activated in a variety of ways. One way - the activeProfiles
-   | section of this document (settings.xml) - will be discussed later. Another way essentially
-   | relies on the detection of a property, either matching a particular value for the property,
-   | or merely testing its existence. Profiles can also be activated by JDK version prefix, where a
-   | value of '1.4' might activate a profile when the build is executed on a JDK version of '1.4.2_07'.
-   | Finally, the list of active profiles can be specified directly from the command line.
-   |
-   | NOTE: For profiles defined in the settings.xml, you are restricted to specifying only artifact
-   |       repositories, plugin repositories, and free-form properties to be used as configuration
-   |       variables for plugins in the POM.
-   |
-   |-->
-  <profiles>
-    <!-- profile
-     | Specifies a set of introductions to the build process, to be activated using one or more of the
-     | mechanisms described above. For inheritance purposes, and to activate profiles via <activatedProfiles/>
-     | or the command line, profiles have to have an ID that is unique.
-     |
-     | An encouraged best practice for profile identification is to use a consistent naming convention
-     | for profiles, such as 'env-dev', 'env-test', 'env-production', 'user-jdcasey', 'user-brett', etc.
-     | This will make it more intuitive to understand what the set of introduced profiles is attempting
-     | to accomplish, particularly when you only have a list of profile id's for debug.
-     |
-     | This profile example uses the JDK version to trigger activation, and provides a JDK-specific repo.
-    <profile>
-      <id>jdk-1.4</id>
-
-      <activation>
-        <jdk>1.4</jdk>
-      </activation>
-
-      <repositories>
-        <repository>
-          <id>jdk14</id>
-          <name>Repository for JDK 1.4 builds</name>
-          <url>http://www.myhost.com/maven/jdk14</url>
-          <layout>default</layout>
-          <snapshotPolicy>always</snapshotPolicy>
-        </repository>
-      </repositories>
-    </profile>
-    -->
-    
-         <!-- java版本 --> 
-     <profile>
-           <id>jdk-17</id>
-           <activation>
-               <activeByDefault>true</activeByDefault>
-               <jdk>17</jdk>
-           </activation>
- 
-           <properties>
-               <maven.compiler.source>17</maven.compiler.source>
-               <maven.compiler.target>17</maven.compiler.target>
-               <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
-           </properties>
-     </profile>
-
-
-    <!--
-     | Here is another profile, activated by the property 'target-env' with a value of 'dev', which
-     | provides a specific path to the Tomcat instance. To use this, your plugin configuration might
-     | hypothetically look like:
-     |
-     | ...
-     | <plugin>
-     |   <groupId>org.myco.myplugins</groupId>
-     |   <artifactId>myplugin</artifactId>
-     |
-     |   <configuration>
-     |     <tomcatLocation>${tomcatPath}</tomcatLocation>
-     |   </configuration>
-     | </plugin>
-     | ...
-     |
-     | NOTE: If you just wanted to inject this configuration whenever someone set 'target-env' to
-     |       anything, you could just leave off the <value/> inside the activation-property.
-     |
-    <profile>
-      <id>env-dev</id>
-
-      <activation>
-        <property>
-          <name>target-env</name>
-          <value>dev</value>
-        </property>
-      </activation>
-
-      <properties>
-        <tomcatPath>/path/to/tomcat/instance</tomcatPath>
-      </properties>
-    </profile>
-    -->
-  </profiles>
-
-  <!-- activeProfiles
-   | List of profiles that are active for all builds.
-   |
-  <activeProfiles>
-    <activeProfile>alwaysActiveProfile</activeProfile>
-    <activeProfile>anotherAlwaysActiveProfile</activeProfile>
-  </activeProfiles>
-  -->
-</settings>
 ```
