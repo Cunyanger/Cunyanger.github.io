@@ -12,8 +12,7 @@ category:
   - 导航
 # 一个页面可以有多个标签
 tag:
-  - 页面配置
-  - 使用指南
+  - 网站导航
 # 此页面会在文章列表置顶
 sticky: true
 sidebar: false
@@ -33,10 +32,26 @@ contributors: false
 <VPCard  
 title="AnyKnew"  
 desc="效率资讯 - 高效读资讯, 5分钟遍历全网热点"  
-logo="https://f0.anyknew.com/static/anyknew-b.png"  
+logo="https://f0.anyknew.com/web/img/icons/favicon-32x32.png"  
 link="https://www.anyknew.com/#/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
+<VPCard  
+title="Z-Library"  
+desc="世界上最大的电子图书馆。自由访问知识和文化。使用客户端可以不翻墙" 
+logo="https://zh.can101.ru/img/favicons/favicon.svg"  
+link="https://zh.101ml.online/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="加勒里克斯在线博物馆"  
+desc="艺术博物馆，历史画作艺术品集合" 
+logo="https://gallerix.asia/favicon.ico"  
+link="https://gallerix.asia/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
 <VPCard  
 title="Jiumo Search 鸠摩搜索"  
 desc="文档搜索引擎" 
@@ -48,18 +63,12 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
 title="SoBooks"  
 desc="一起分享阅读的乐趣~(需要关注微信公众号)" 
-logo="https://sobooks.cc/wp-content/themes/Git/assets/img/logo.png"  
+logo="https://sobooks.cc/favicon.ico"  
 link="https://sobooks.cc/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
-<VPCard  
-title="Z-Library"  
-desc="世界上最大的电子图书馆。自由访问知识和文化。使用客户端可以不翻墙" 
-logo="https://1ktools.com/api/tools/favicon?domain=zh.101ml.online"  
-link="https://zh.101ml.online/"  
-background="rgba(45, 46, 47, 0.15)" 
-/>
+
 
 <VPCard  
 title="煎蛋"  
@@ -96,8 +105,8 @@ background="rgba(45, 46, 47, 0.15)"
 <div class="vp-card-container">
 <VPCard  
 title="赔钱机场"  
-desc="赔钱机场最便宜，小号七折返利"  
-logo="https://f0.anyknew.com/static/anyknew-b.png"  
+desc="最便宜，小号七折返利，节假日有优惠"  
+logo="https://www.赔钱机场.site/document/icon/logo.png"  
 link="https://www.xn--mes358aby2apfg.site/register?code=ITmK6tPr"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -105,46 +114,46 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
 title="魔戒"  
 desc="比较稳定，包流量"  
-logo="https://f0.anyknew.com/static/mojie.app"  
+logo="https://mojie.app/favicon.ico"  
 link="https://mojie.app/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
 title="樱花猫，稳定但贵"  
-desc="稳定但贵"  
-logo="https://f0.anyknew.com/static/mojie.app"  
-link="https://docs.sakura-cat.club/"  
+desc="稳定但贵，有不限时套餐"  
+logo="https://ts3.tc.mm.bing.net/th/id/ODF._iCJ7eZoEGGrz9KrsrE1dQ?w=16&h=16&qlt=80&o=6&dpr=1.5&pid=1.2"  
+link="https://sakura-cat-cdn2.com/register?code=fucpOk2q"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
 title="性价比机场"  
-desc=""  
-logo="https://f0.anyknew.com/static/github.akams.cn"  
+desc="已停止注册，最低2r/月"  
+logo="https://xn--6nq44r2uh9rhj7f.com/favicon.ico"  
 link="https://xn--6nq44r2uh9rhj7f.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
 title="一元机场"  
-desc="中规中矩"  
+desc="中规中矩" 
 logo="https://f0.anyknew.com/static/github.akams.cn"  
 link="https://xn--4gq62f.org/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
-title="Watt Toolkit"  
-desc="瓦特工具箱(Steam++官网)"  
-logo="https://f0.anyknew.com/static/steampp.net"  
+title="Watt Toolkit（Steam++）"  
+desc="瓦特工具箱，支持多平台加速"  
+logo="https://steampp.net/favicon.ico"  
 link="https://steampp.net/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
 title="Steamcommunity 302 Ver.13.0.02 – Dogfight360"  
-desc="瓦特工具箱(Steam++官网)"  
+desc="支持多平台加速"  
 logo="https://f0.anyknew.com/static/dogfight360.com"  
 link="https://www.dogfight360.com/blog/18682/"  
 background="rgba(45, 46, 47, 0.15)" 
@@ -152,7 +161,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 <VPCard  
 title="Github Proxy "  
-desc="文件代理加速"  
+desc="Github文件代理加速"  
 logo="https://f0.anyknew.com/static/github.akams.cn"  
 link="https://github.akams.cn/"  
 background="rgba(45, 46, 47, 0.15)" 
@@ -165,20 +174,19 @@ background="rgba(45, 46, 47, 0.15)"
 ## 🛠️工具
 
 <div class="vp-card-container">
-
 <VPCard  
-title="Pixpin"  
-desc="截图/贴图/长截图/图片转文字(OCR) "  
-logo="https://pixpin.cn/images/logo/1024.png"  
-link="https://pixpinapp.com/"  
+title="Rufus"
+desc="轻松创建 USB 启动盘"
+logo="https://1ktools.com/api/tools/favicon?domain=rufus.ie"  
+link="https://rufus.ie/zh/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
 <VPCard  
-title="北京时间"  
-desc="相对比较准确的北京时间，抢券抢票"  
-logo="https://1ktools.com/api/tools/favicon?domain=beijingtime.com.cn"  
-link="https://www.beijingtime.com.cn/"  
+title="FirPE"
+desc="目前最最好用的第三方WinPE"
+logo="https://1ktools.com/api/tools/favicon?domain=firpe.cn"  
+link="https://www.firpe.cn/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -191,10 +199,58 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
 <VPCard  
+title="Office Tool Plus"  
+desc="一键部署 Office"
+logo="https://1ktools.com/api/tools/favicon?domain=otp.landian.vip"  
+link="https://otp.landian.vip/zh-cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="Autologon - Sysinternals"  
+desc="微软官方Windosw开机密码跳过工具"
+logo="https://learn.microsoft.com/zh-cn/sysinternals/downloads/media/shared/download_sm.png"  
+link="https://learn.microsoft.com/zh-cn/sysinternals/downloads/autologon"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="联想应用商店"  
+desc="PC应用下载安装，与火绒同款"
+logo="https://lestore.lenovo.com/favicon.ico"  
+link="https://lestore.lenovo.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="Pixpin"  
+desc="截图/贴图/长截图/图片转文字(OCR) "  
+logo="https://pixpin.cn/favicon.ico"  
+link="https://pixpinapp.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
 title="油猴脚本"  
 desc="浏览器JS脚本扩展"
 logo="https://1ktools.com/api/tools/favicon?domain=greasyfork.org"  
 link="https://greasyfork.org/zh-CN"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="北京时间"  
+desc="相对比较准确的北京时间，抢券抢票"  
+logo="https://1ktools.com/api/tools/favicon?domain=beijingtime.com.cn"  
+link="https://www.beijingtime.com.cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="LocalSend"  
+desc="局域网文件传输，Windows、IOS、Android跨平台传输"
+logo="https://1ktools.com/api/tools/favicon?domain=localsend.org"  
+link="https://localsend.org/zh-CN"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -207,22 +263,12 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
 <VPCard  
-title="voidtools"  
+title="Everything"
 desc="Everything 基于名称快速定位文件和文件夹。"
 logo="https://1ktools.com/api/tools/favicon?domain=voidtools.com"  
 link="https://www.voidtools.com/zh-cn/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
-
-<VPCard  
-title="Office Tool Plus"  
-desc="一键部署 Office"
-logo="https://1ktools.com/api/tools/favicon?domain=otp.landian.vip"  
-link="https://otp.landian.vip/zh-cn/"  
-background="rgba(45, 46, 47, 0.15)" 
-/>
-
-
 
 <VPCard  
 title="WizTree"  
@@ -232,11 +278,17 @@ link="https://www.diskanalyzer.com"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
+<VPCard  
+title="豪猪接码"  
+desc="接码平台"
+logo="https://1ktools.com/api/tools/favicon?domain=h5.haozhuma.com"  
+link="https://h5.haozhuma.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
 </div>
 
 ## 🎨素材
-
-
 
 <div class="vp-card-container">
 
@@ -259,7 +311,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="Subtle Patterns"  
   desc="Free textures for your next web project"
-  logo="https://www.toptal.com/favicon.ico"  
+  logo="https://www.toptal.com/designers/subtlepatterns/favicon.ico"  
   link="https://www.toptal.com/designers/subtlepatterns/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -267,7 +319,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="ByteDance IconPark"  
   desc="字节跳动官方素材库"
-  logo="https://iconpark.oceanengine.com/favicon.ico"  
+  logo="https://lf-iconpark-cdn-cn.bytetos.com/obj/iconpark-site/bydesign/iconparksite/logo.svg"  
   link="https://iconpark.oceanengine.com/home"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -276,13 +328,12 @@ background="rgba(45, 46, 47, 0.15)"
 
 ## ⌨️开发
 
-
-
 <div class="vp-card-container">
+
 <VPCard  
   title="Maven Repository"  
   desc="Search/Browse/Explore - Maven 仓库"
-  logo="https://mvnrepository.com/favicon.ico"  
+  logo="https://mvnrepository.com/assets/images/e8a73ff26e5b1e3f20868111d80c5544-favicon.ico"  
   link="https://mvnrepository.com/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -314,7 +365,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="Cron 表达式生成器"  
   desc="时间表达式"
-  logo="https://cron.qqe2.com/favicon.ico"  
+  logo="https://cron.qqe2.com/res/logo.png"  
   link="https://cron.qqe2.com/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -361,11 +412,10 @@ background="rgba(45, 46, 47, 0.15)"
   link="https://natapp.cn/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
-
 <VPCard  
   title="ZeroNews"  
   desc="ZeroNews 内网穿透"
-  logo="https://user.zeronews.cc/favicon.ico"  
+  logo="https://user.zeronews.cc/favicon.svg"  
   link="https://user.zeronews.cc/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -382,11 +432,10 @@ background="rgba(45, 46, 47, 0.15)"
 ## 📽️影音
 
 <div class="vp-card-container">
-
 <VPCard  
 title="观影 GYING"  
-desc="免费视频网站，内容发布地址：https://www.gying.page/"
-logo="https://1ktools.com/api/tools/favicon?domain=www.gyg.la"  
+desc="免费视频网站，内容发布地址：https://www.gying.page/，原名片库网（无名小站）"
+logo="https://www.gyg.la/favicon.png"  
 link="https://www.gyg.la/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -402,7 +451,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
 title="网飞猫"  
 desc="最新Netflix新剧_韩国电影免费在线观看"
-logo="https://1ktools.com/api/tools/favicon?domain=ncat21.com"  
+logo="https://dl.ncat21.com/ncat/01/images/logo.svg"  
 link="https://www.ncat21.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -412,15 +461,13 @@ background="rgba(45, 46, 47, 0.15)"
 ## 🎮游戏
 
 <div class="vp-card-container">
-
 <VPCard  
 title="Switch520"  
 desc="PC、SWITCH破解游戏下载"
-logo="https://1ktools.com/api/tools/favicon?domain=ncat21.com"  
+logo="https://www.gamer520.com/favicon.png"  
 link="https://sway.cloud.microsoft/1zyVegf0n3cHdR8o"  
 background="rgba(45, 46, 47, 0.15)" 
 />
-
  <VPCard  
 title="ns中文网"  
 desc="switch游戏下载,网盘下载,NSP-XCI汉化破解游戏下载,金手指存档"
@@ -430,8 +477,16 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
  <VPCard  
+title="Byrutor"  
+desc="俄罗斯最大游戏破解资源站"
+logo="https://byrutgame.org/favicon.png"  
+link="https://byrutgame.org/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+ <VPCard  
 title="Game-Zone Labs"  
-desc="Easily download and manage single-player game cheats for your convenience 破解Wemod、风灵月影修改器下载管理"
+desc="游戏修改器集合平台"
 logo="https://1ktools.com/api/tools/favicon?domain=gamezonelabs.com"  
 link="https://gamezonelabs.com/products/game-cheats-manager"  
 background="rgba(45, 46, 47, 0.15)" 
@@ -448,7 +503,7 @@ background="rgba(45, 46, 47, 0.15)"
  <VPCard  
 title="非线性列车"  
 desc="游戏DLC补丁，正版本体可打补丁"
-logo="https://1ktools.com/api/tools/favicon?domain=q.juij.fun"  
+logo="https://q.juij.fun/icon/icon192.webp"  
 link="https://q.juij.fun/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
@@ -478,7 +533,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="MacKed"  
   desc="专注于 Mac 破解资源的分享与下载"
-  logo="https://macked.app/favicon.ico"  
+  logo="https://macked.app/wp-content/uploads/favicon.png"  
   link="https://macked.app/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
@@ -486,7 +541,7 @@ background="rgba(45, 46, 47, 0.15)"
 <VPCard  
   title="马可菠萝"  
   desc="分享你喜欢的 MAC 应用"
-  logo="https://www.macbl.com/favicon.ico"  
+  logo="https://macbl01.skqandroid.com/images/favicon.ico"  
   link="https://www.macbl.com/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
