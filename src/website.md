@@ -36,7 +36,6 @@ logo="https://f0.anyknew.com/web/img/icons/favicon-32x32.png"
 link="https://www.anyknew.com/#/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
-
 <VPCard  
 title="Z-Library"  
 desc="世界上最大的电子图书馆。自由访问知识和文化。使用客户端可以不翻墙" 
@@ -84,6 +83,16 @@ title="Hello 算法"
 desc="超棒的数据结构与算法的Github项目" 
 logo="https://1ktools.com/api/tools/favicon?domain=hello-algo.com&size=256"  
 link="https://www.hello-algo.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+
+
+<VPCard  
+title="LanguageGuide.org"  
+desc="单词与图像关联" 
+logo="https://www.languageguide.org/favicon.ico"  
+link="https://www.languageguide.org/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
