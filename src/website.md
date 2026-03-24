@@ -166,6 +166,14 @@ background="rgba(45, 46, 47, 0.15)"
 
 <div class="vp-card-container">
 <VPCard  
+title="Ventoy"
+desc="多系统启动U盘，完美适配PE"
+logo="https://www.ventoy.net/favicon.ico"  
+link="https://www.ventoy.net/cn/index.html"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+    
+<VPCard  
 title="Rufus"
 desc="轻松创建 USB 启动盘"
 logo="https://1ktools.com/api/tools/favicon?domain=rufus.ie"  
@@ -274,6 +282,14 @@ title="豪猪接码"
 desc="接码平台"
 logo="https://1ktools.com/api/tools/favicon?domain=h5.haozhuma.com"  
 link="https://h5.haozhuma.com/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="iLovePDF"  
+desc="Online PDF tools for PDF lovers"
+logo="https://www.ilovepdf.com/img/favicons-pdf/favicon-32x32.png"  
+link="https://www.ilovepdf.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -427,9 +443,10 @@ background="rgba(45, 46, 47, 0.15)"
 title="观影 GYING"  
 desc="免费视频网站，内容发布地址：https://www.gying.page/，原名片库网（无名小站）"
 logo="https://www.gyg.la/favicon.png"  
-link="https://www.gyg.la/"  
+link="https://www.xn--wcv59z.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
+
 
 <VPCard  
 title="电视盒子 APP"  
@@ -584,3 +601,4 @@ background="rgba(45, 46, 47, 0.15)"
 | astah           | UML 绘制                              |
 | Axure RP        | 原型绘制                              |
 | APIfox          | 接口文档                              |
+
