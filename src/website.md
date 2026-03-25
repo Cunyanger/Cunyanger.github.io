@@ -181,7 +181,7 @@ logo="https://www.ventoy.net/favicon.ico"
 link="https://www.ventoy.net/cn/index.html"  
 background="rgba(45, 46, 47, 0.15)" 
 />
-    
+
 <VPCard  
 title="Rufus"
 desc="轻松创建 USB 启动盘"
@@ -303,6 +303,12 @@ background="rgba(45, 46, 47, 0.15)"
 />
 
 </div>
+
+>  WinRAR：https://www.alipan.com/s/F4Y1B7dE6HM
+>
+> 微软常用运行库合集 2026.01.17：https://www.alipan.com/s/hB3eKztWMw7
+>
+> Fences 破解补丁：https://www.alipan.com/s/LqPKvPzhrDN
 
 ## 🎨素材
 

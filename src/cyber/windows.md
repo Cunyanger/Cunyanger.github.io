@@ -13,7 +13,7 @@ sticky: true
 
 ---
 
-<!-- more -->
+## Windows、Office激活
 
 **联网情况下，以管理员模式启动PowerShell,复制以下命令到Powershell窗口, 回车**
 
@@ -50,3 +50,32 @@ irm https://get.activated.win | iex
 转自：
 
 [一行命令永久激活Win11,Win10，Office, 无需找激活码，无需下载安装；目前看到最最简单，安全，可靠的激活方法，开源免费，一直有效 - jopny - 博客园](https://www.cnblogs.com/jopny/p/window_office_onekey_activate_free.html)
+
+
+
+## 延迟更新
+
+> 若直接关闭更新服务会导致Windows其他服务无法正常下载，目前最佳策略为修改注册表无限延长更新时间
+
+延长更新时间：创建文本文档，复制下方内容后修改文件后缀`.reg`
+
+```
+Windows Registry Editor Version 5.00
+
+
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\WindowsUpdate\UX\Settings]
+
+"FlightSettingsMaxPauseDays"=dword:00002685
+
+"PauseFeatureUpdatesStartTime"="2023-08-11T00:56:48Z"
+
+"PauseFeatureUpdatesEndTime"="2050-08-11T00:56:45Z"
+
+"PauseQualityUpdatesStartTime"="2023-08-11T00:56:48Z"
+
+"PauseQualityUpdatesEndTime"="2050-08-11T00:56:45Z"
+
+"PauseUpdatesExpiryTime"="2050-08-11T00:56:45Z"
+```
+
