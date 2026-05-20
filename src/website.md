@@ -306,9 +306,11 @@ background="rgba(45, 46, 47, 0.15)"
 
 >  WinRAR：https://www.alipan.com/s/F4Y1B7dE6HM
 >
-> 微软常用运行库合集 2026.01.17：https://www.alipan.com/s/hB3eKztWMw7
+>  微软常用运行库合集 2026.01.17：https://www.alipan.com/s/hB3eKztWMw7
 >
-> Fences 破解补丁：https://www.alipan.com/s/LqPKvPzhrDN
+>  Fences 破解补丁：https://www.alipan.com/s/LqPKvPzhrDN
+>
+>  Beyond Compare：https://www.alipan.com/s/RnnduPvSgqJ
 
 ## 🎨素材
 
