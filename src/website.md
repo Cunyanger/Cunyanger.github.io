@@ -460,7 +460,7 @@ background="rgba(45, 46, 47, 0.15)"
 title="观影 GYING"  
 desc="免费视频网站，内容发布地址：https://www.gying.page/，原名片库网（无名小站）"
 logo="https://www.gyg.la/favicon.png"  
-link="https://www.xn--wcv59z.com/"  
+link="https://www.挂了.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
