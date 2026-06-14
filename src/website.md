@@ -533,6 +533,14 @@ link="https://q.juij.fun/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
+ <VPCard  
+title="游民驿站"  
+desc="游戏DLC补丁，正版本体可打补丁"
+logo="https://gamezys.cn/wp-content/uploads/2026/05/cropped-matrix-media-1779714330409-e10e6204-32x32.jpg"  
+link="https://gamezys.cn/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
 </div>
 
 ## 🍎MAC破解
