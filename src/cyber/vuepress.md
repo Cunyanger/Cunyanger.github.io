@@ -464,3 +464,73 @@ echo 继续运行
 pause
 ```
 
+## markdown-it 增强插件
+
+### 一、容器与布局类
+
+| 插件                      | 功能                                              |
+| :------------------------ | :------------------------------------------------ |
+| `markdown-it-container`   | 自定义容器（如提示框、警告框），VuePress 内置支持 |
+| `markdown-it-collapsible` | 可折叠/展开的内容块                               |
+| `markdown-it-details`     | HTML5 `<details>` 标签支持                        |
+| `markdown-it-tabs`        | 标签页切换内容                                    |
+| `markdown-it-gridtables`  | 网格表格（复杂布局）                              |
+
+------
+
+### 二、文本样式与增强
+
+| 插件                   | 功能                                           |
+| :--------------------- | :--------------------------------------------- |
+| `markdown-it-mark`     | 高亮标记 `==text==`                            |
+| `markdown-it-ins`      | 插入标记 `++text++`                            |
+| `markdown-it-sub`      | 下标 `H~2~O`                                   |
+| `markdown-it-sup`      | 上标 `x^2^`                                    |
+| `markdown-it-abbr`     | 缩写定义 `*[HTML]: Hyper Text Markup Language` |
+| `markdown-it-deflist`  | 定义列表（术语+解释）                          |
+| `markdown-it-emoji`    | Emoji 表情 `:smile:` → 😄                       |
+| `markdown-it-footnote` | 脚注 `[^1]`                                    |
+
+------
+
+### 三、代码与高亮
+
+| 插件                                 | 功能                    |
+| :----------------------------------- | :---------------------- |
+| `markdown-it-prism` / `highlight.js` | 代码语法高亮            |
+| `markdown-it-copy`                   | 代码块复制按钮          |
+| `markdown-it-code-tabs`              | 多语言代码切换          |
+| `markdown-it-task-lists`             | 任务列表 `- [x] 已完成` |
+| `markdown-it-line-numbers`           | 代码行号                |
+
+------
+
+### 四、媒体与嵌入
+
+| 插件                        | 功能                                |
+| :-------------------------- | :---------------------------------- |
+| `markdown-it-video`         | 嵌入视频                            |
+| `markdown-it-embed`         | 嵌入 YouTube、CodePen 等            |
+| `markdown-it-image-figures` | 图片自动加 `<figure>` 标签和标题    |
+| `markdown-it-imsize`        | 控制图片尺寸 `![alt](url =100x200)` |
+
+------
+
+### 五、链接与导航
+
+| 插件                                 | 功能                                     |
+| :----------------------------------- | :--------------------------------------- |
+| `markdown-it-anchor`                 | 标题自动添加锚点链接（VuePress 内置）    |
+| `markdown-it-toc-done-right` / `toc` | 自动生成目录                             |
+| `markdown-it-link-attributes`        | 给链接自动加属性（如 `target="_blank"`） |
+| `markdown-it-external-links`         | 外部链接自动识别并加图标                 |
+
+------
+
+### 六、图表与数学
+
+| 插件                             | 功能                  |
+| :------------------------------- | :-------------------- |
+| `markdown-it-mathjax3` / `katex` | LaTeX 数学公式        |
+| `markdown-it-mermaid`            | Mermaid 流程图/时序图 |
+| `markdown-it-plantuml`           | PlantUML 图表         |
