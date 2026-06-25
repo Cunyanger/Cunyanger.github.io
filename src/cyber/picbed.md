@@ -1,6 +1,6 @@
 ---
 # 这是文章的标题
-title: Github+PicGo 搭建图床
+title: Github+PicGo Image hosting
 # 你可以自定义封面图片
 cover:
 # 这是页面的图标

@@ -1,6 +1,6 @@
 ---
 # 这是文章的标题
-title: 网页导航
+title: Website Navigation
 # 你可以自定义封面图片
 cover: https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/rain_sta_b.png
 # 这是页面的图标
@@ -20,11 +20,12 @@ lastUpdated: false
 contributors: false
 ---
 
-## 📖图书媒体
+## 📖Books & Media
 
 ::: tip ❤️
 
 身体和灵魂总有一个在路上
+You can either travel or read, but either your body or soul must be on the way.
 
 :::
 
@@ -68,8 +69,6 @@ link="https://sobooks.cc/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
-
-
 <VPCard  
 title="煎蛋"  
 desc="地球上没有新鲜事" 
@@ -86,8 +85,6 @@ link="https://www.hello-algo.com/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
-
-
 <VPCard  
 title="LanguageGuide.org"  
 desc="单词与图像关联" 
@@ -100,7 +97,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 ---
 
-## 🛫机场加速
+## 🛫Proxy Service
 
 <div class="vp-card-container">
 <VPCard  
@@ -171,7 +168,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 ---
 
-## 🛠️工具
+## 🛠️Tools
 
 <div class="vp-card-container">
 <VPCard  
@@ -304,15 +301,15 @@ background="rgba(45, 46, 47, 0.15)"
 
 </div>
 
->  WinRAR：https://www.alipan.com/s/F4Y1B7dE6HM
+> WinRAR：https://www.alipan.com/s/F4Y1B7dE6HM
 >
->  微软常用运行库合集 2026.01.17：https://www.alipan.com/s/hB3eKztWMw7
+> 微软常用运行库合集 2026.01.17：https://www.alipan.com/s/hB3eKztWMw7
 >
->  Fences 破解补丁：https://www.alipan.com/s/LqPKvPzhrDN
+> Fences 破解补丁：https://www.alipan.com/s/LqPKvPzhrDN
 >
->  Beyond Compare：https://www.alipan.com/s/RnnduPvSgqJ
+> Beyond Compare：https://www.alipan.com/s/RnnduPvSgqJ
 
-## 🎨素材
+## 🎨Material
 
 <div class="vp-card-container">
 
@@ -350,7 +347,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 </div>
 
-## ⌨️开发
+## ⌨️ Development
 
 <div class="vp-card-container">
 
@@ -417,9 +414,10 @@ background="rgba(45, 46, 47, 0.15)"
   link="https://patorjk.com/software/taag/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
+
 </div>
 
-## 🌐内网穿透
+## 🌐NAT Traversal
 
 <div class="vp-card-container">
 <VPCard  
@@ -453,7 +451,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 :::
 
-## 📽️影音
+## 📽️Audio-Visual
 
 <div class="vp-card-container">
 <VPCard  
@@ -463,7 +461,6 @@ logo="https://www.gyg.la/favicon.png"
 link="https://www.挂了.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
-
 
 <VPCard  
 title="电视盒子 APP"  
@@ -483,7 +480,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 </div>
 
-## 🎮游戏
+## 🎮Games
 
 <div class="vp-card-container">
 <VPCard  
@@ -501,7 +498,7 @@ link="https://www.ns211.com/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
- <VPCard  
+<VPCard  
 title="Byrutor"  
 desc="俄罗斯最大游戏破解资源站"
 logo="https://byrutgame.org/favicon.png"  
@@ -509,7 +506,7 @@ link="https://byrutgame.org/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
- <VPCard  
+<VPCard  
 title="Game-Zone Labs"  
 desc="游戏修改器集合平台"
 logo="https://1ktools.com/api/tools/favicon?domain=gamezonelabs.com"  
@@ -517,7 +514,7 @@ link="https://gamezonelabs.com/products/game-cheats-manager"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
- <VPCard  
+<VPCard  
 title="Nexus Mods"  
 desc="Nexus Mods - Mods and Community，游戏MOD下载"
 logo="https://1ktools.com/api/tools/favicon?domain=nexusmods.com"  
@@ -525,7 +522,7 @@ link="https://www.nexusmods.com/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
- <VPCard  
+<VPCard  
 title="非线性列车"  
 desc="游戏DLC补丁，正版本体可打补丁"
 logo="https://q.juij.fun/icon/icon192.webp"  
@@ -533,7 +530,7 @@ link="https://q.juij.fun/"
 background="rgba(45, 46, 47, 0.15)" 
 />
 
- <VPCard  
+<VPCard  
 title="游民驿站"  
 desc="游戏DLC补丁，正版本体可打补丁"
 logo="https://gamezys.cn/wp-content/uploads/2026/05/cropped-matrix-media-1779714330409-e10e6204-32x32.jpg"  
@@ -543,8 +540,7 @@ background="rgba(45, 46, 47, 0.15)"
 
 </div>
 
-## 🍎MAC破解
-
+## 🍎MAC
 
 <div class="vp-card-container">
 <VPCard  
@@ -594,11 +590,10 @@ background="rgba(45, 46, 47, 0.15)"
   link="https://www.macapp.org/"  
   background="rgba(45, 46, 47, 0.15)" 
 />
+
 </div>
 
 ---
-
-
 
 # 必备软件
 
@@ -626,4 +621,3 @@ background="rgba(45, 46, 47, 0.15)"
 | astah           | UML 绘制                              |
 | Axure RP        | 原型绘制                              |
 | APIfox          | 接口文档                              |
-

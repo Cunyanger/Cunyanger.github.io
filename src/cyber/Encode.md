@@ -1,6 +1,6 @@
 ---
 # 这是文章的标题
-title: 编程环境搭建
+title: Programming Environment
 # 你可以自定义封面图片
 cover:
 # 这是页面的图标
@@ -20,7 +20,7 @@ sticky: true
 star: true
 ---
 
-## Github下载加速
+## Github Download acceleration
 
 [GitHub Proxy 代理加速](https://ghfast.top/)
 

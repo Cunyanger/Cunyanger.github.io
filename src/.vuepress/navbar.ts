@@ -9,7 +9,7 @@ export default navbar([
     prefix: "/notes/",
     children: [
       {
-        text: "专业",
+        text: "Major",
         icon: "noto:laptop",
         prefix: "software/",
         children: [
@@ -26,7 +26,7 @@ export default navbar([
         ],
       },
       {
-        text: "社科",
+        text: "Social Sciences",
         icon: "book",
         prefix: "social_sciences/",
         children: [
@@ -46,7 +46,7 @@ export default navbar([
         ],
       },
       {
-        text: "文学",
+        text: "Literature",
         icon: "book",
         prefix: "literature/",
         children: [

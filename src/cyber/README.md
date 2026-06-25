@@ -1,5 +1,5 @@
 ---
-title: 赛博指南
+title: Cyber Guide
 index: false
 icon: noto:laptop
 category:

@@ -1,6 +1,6 @@
 ---
 # 这是文章的标题
-title: Maven环境部署
+title: Maven
 # 你可以自定义封面图片
 cover:
 # 这是页面的图标
@@ -58,8 +58,6 @@ export PATH=$JAVA_HOME/bin:$PATH
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 ```
 
-
-
 > 这个地方扩展个知识点：
 > 有个知识点我们说一下，系统运行java或者其他外部命令的时候，系统是如何找到这些命令的？
 > linux中会去PATH对应的所有目录中寻找这个命令，找到了就可以直接运行，如果没有设置PATH，我们需要知道命令的完整路径才可以运行，所以使用PATH更方便一些。
@@ -97,10 +95,11 @@ public class HelloWorld {
 
 ```sh
 [root@ady01 jdk]# cd /opt/jdk/
-[root@ady01 jdk]# javac HelloWorld.java 
+[root@ady01 jdk]# javac HelloWorld.java
 [root@ady01 jdk]# java HelloWorld
 hello maven！
 ```
+
 输出hello maven表示正常，jdk安装成功！
 
 ## Windows安装Maven
@@ -108,7 +107,6 @@ hello maven！
 <https://maven.apache.org/download.cgi>
 
 [apache-maven安装包下载-开源镜像站-阿里云](https://mirrors.aliyun.com/apache/maven/?spm=a2c6h.25603864.0.0.4c993b952we6eM)
-
 
 ![[_Annex/09c1d0922960207636654ed5d67f4c20_MD5.png]]
 
@@ -141,9 +139,9 @@ OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
 
 #### 启动文件设置
 
->  后面会用到 `~` 这个符号，先对这个符号做一下说明，这个符号表示当前用户的目录
->  window中默认在 `C:\Users\用户名`
->  linux root用户默认在/root目录，其他用户的~对应/home/用户名
+> 后面会用到 `~` 这个符号，先对这个符号做一下说明，这个符号表示当前用户的目录
+> window中默认在 `C:\Users\用户名`
+> linux root用户默认在/root目录，其他用户的~对应/home/用户名
 
 `mvn` 运行的时候，会加载启动的配置文件 `settings.xml`，这个文件默认在 `MAVEN_HOME/conf` 目录
 一般会拷贝一个放在 `~/.m2` 目录中，Maven的conf内的是全局范围的配置文件，整个机器上所有用户都会受到该配置的影响，而.m2是用户范围级别的，只有当前用户才会受到该配置的影响。推荐使用用户级别，以免影响到其他用户的使用。还有这样使用方便日后maven版本升级，一般情况下maven整个安装目录我们都不要去动，升级的时候只需要替换一下安装文件就可以了
@@ -228,21 +226,21 @@ OS name: "windows 10", version: "10.0", arch: "amd64", family: "windows"
   </mirrors>
 
   <profiles>
-         <!-- java版本 --> 
+         <!-- java版本 -->
      <profile>
            <id>jdk-17</id>
            <activation>
                <activeByDefault>true</activeByDefault>
                <jdk>17</jdk>
            </activation>
- 
+
            <properties>
                <maven.compiler.source>17</maven.compiler.source>
                <maven.compiler.target>17</maven.compiler.target>
                <maven.compiler.compilerVersion>17</maven.compiler.compilerVersion>
            </properties>
      </profile>
-     
+
   </profiles>
 
   <!-- activeProfiles
@@ -327,6 +325,7 @@ src同级中要有pom.xml
 ```
 mvn org.apache.maven.plugins:maven-toolchains-plugin:3.2.0:display-discovered-jdk-toolchains
 ```
+
 ## Maven的运行原理
 
 运行下面命令，看一下效果

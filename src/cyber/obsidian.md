@@ -1,5 +1,5 @@
 ---
-title: Obsidian 知识管理
+title: Obsidian
 icon: fa6-brands:markdown
 order: 2
 category:
@@ -16,7 +16,7 @@ tag:
 
 - 自动格式化表格
 
-- Excel 样式的表格导航 （使用  `Tab` 和  `Enter` 在行和列之间导航）
+- Excel 样式的表格导航 （使用 `Tab` 和 `Enter` 在行和列之间导航）
 
 - 类 org-mode 式的公式计算
 
@@ -34,12 +34,12 @@ tag:
 
 按如下步骤创建表格：
 
-1. 输入  `|` ;
-2. 输入列标题，然后按  `Tab` 键；
+1. 输入 `|` ;
+2. 输入列标题，然后按 `Tab` 键；
 3. 重复第二步，直到所有标题输入完毕，然后按 `回车` 键；
 4. 此时光标来到表格的第一行；
 5. 输入列的内容，然后按 `Tab` 键；
-6. 重复第五步，直到所有列的内容输入完毕，如果需要增加新行，按` 回车 `键；
+6. 重复第五步，直到所有列的内容输入完毕，如果需要增加新行，按`回车`键；
 
 :::
 
@@ -53,10 +53,6 @@ tag:
 | Shift + Tab      | 切换到前一个单元格       |
 | Enter            | 切换到下一行             |
 | Ctrl + Shift + D | 在侧边栏打开表格控制面板 |
-
-
-
-
 
 ### Better Word Coun
 
@@ -92,7 +88,6 @@ tag:
 
 为了提供更好的输入体验而设计的，包括自动文本格式化和符号编辑增强功能。自动格式化文本可以标准化文档格式，美化文档外观，提高编辑体验。插件支持自动大写首字母、自动添加空格、符号自动配对/删除等功能。同时，插件还提供了编辑增强功能，包括选中文本后的快速转换、连续全角符号转半角符号、自定义转换规则等。适用于中文和英文混合输入，解决了中文用户在Obsidian中输入时的格式化和编辑问题。
 
-
 ### Editing Toolbar
 
 可视化编辑工具栏
@@ -113,16 +108,13 @@ ObsidianMD 的图片转换插件可通过拖放或粘贴将图片从一种格式
 
 它可以根据自定义顺序对文件进行排序，并使用 Spaces 添加文件图标。使用 Flow Editor 可以编辑内嵌的嵌入内容。使用 Maker Mode 可以样式化文本并添加新的 Markdown 块，而无需编写 Markdown 代码。Make.md 还提供了自定义工作区 Spaces、上下文 Contexts、快速编辑 Blink 和流畅编辑 Flow 等功能，帮助用户更好地组织和管理笔记，并提高工作效率。无论是需要排序文件、编辑嵌入内容、样式化文本还是添加 Markdown 块，Make.md 都能满足用户的需求。
 
-
 ### obsidian-linter
 
 格式化和样式化笔记的插件，支持格式化 YAML 标签、别名、数组和元数据、脚注、标题、间距、数学块、常规 Markdown 内容等。用户可以在设置中切换和配置规则，通过自定义规则选项实现更多功能。插件可在手动保存时对当前文件进行格式化，也可对整个文件夹进行格式化。用户还可以通过禁用规则、YAML Frontmatter 或 Range Ignore 来个性化配置插件的行为。通过自定义 Lint 命令和正则表达式替换规则，用户可以进一步扩展插件的功能。
 
-
 ### Mind Map
 
 可以使用 Markmap 将 Markdown 笔记显示为思维导图。它可以预览当前笔记的思维导图，随着选择其他窗格而更新预览，类似于本地图、大纲和反向链接窗格。此外，它还提供了固定预览窗格和复制思维导图截图到剪贴板的功能。该插件兼容 Obsidian v0.9.7+，并可以直接在应用程序内安装。如果需要手动安装，可以从 GitHub 下载最新版本并将文件夹放入 vault 的插件文件夹中。Obsidian Mind Map 插件解决了将 Markdown 笔记以思维导图形式展示的问题，适用于需要可视化笔记内容的场景
-
 
 ### Omnisearch
 
@@ -150,8 +142,6 @@ ObsidianMD 的图片转换插件可通过拖放或粘贴将图片从一种格式
 | Ctrl+A, Delete | Ctrl+A, Delete | 删除当前项目内容                                       |
 | Ctrl+D         | Cmd+D          | 預設的刪除段落按鍵，可刪除項目整行                     |
 
-
-
 ### Reveal Active File Button
 
 定位到当前文件按钮
@@ -169,4 +159,3 @@ ObsidianMD 的图片转换插件可通过拖放或粘贴将图片从一种格式
 emplater 号称 Obsidian 四大金刚之一 (quickadd,dataview,obsidian-excalidraw-plugin), 模板插件当之无愧，但因为模板插件用法很极客基本靠命令代码，很多新手只能用别人写好的模板实现自己需求，入坑门槛比较高。
 
 [PKMer_Obsidian 插件：Templater 可以替代核心模板插件的效率神器](https://pkmer.cn/Pkmer-Docs/10-obsidian/obsidian社区插件/templater/templater-obsidian/#obsidian-插件templater-可以替代核心模板插件的效率神器)
-
