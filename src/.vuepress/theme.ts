@@ -5,7 +5,7 @@ import sidebar from "./sidebar.js";
 
 export default hopeTheme({
   hostname: "https://blog.982345.xyz",
-  favicon:"/favicon.svg",
+  favicon: "/favicon.svg",
   author: {
     name: "Cunyanger",
     url: "https://blog.982345.xyz",
@@ -14,13 +14,12 @@ export default hopeTheme({
   repo: "https://blog.982345.xyz",
   docsDir: "src",
 
-  
   // 导航栏
   navbar,
   navbarLayout: {
     start: ["Brand"],
     center: [],
-    end:["Links","Language", "Outlook", "Search"]
+    end: ["Links", "Language", "Outlook", "Search"],
   },
 
   // 侧边栏
@@ -96,12 +95,12 @@ export default hopeTheme({
     vPre: true,
 
     // 取消注释它们如果你需要 TeX 支持
-    // math: {
-    //   // 启用前安装 katex
-    //   type: "katex",
-    //   // 或者安装 mathjax-full
-    //   type: "mathjax",
-    // },
+    math: {
+      // 启用前安装 katex
+      type: "katex",
+      // 或者安装 mathjax-full
+      // type: "mathjax",
+    },
 
     // 如果你需要幻灯片，安装 @vuepress/plugin-revealjs 并取消下方注释
     // revealjs: {

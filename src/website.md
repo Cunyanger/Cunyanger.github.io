@@ -39,9 +39,9 @@ background="rgba(45, 46, 47, 0.15)"
 />
 <VPCard  
 title="Z-Library"  
-desc="世界上最大的电子图书馆。自由访问知识和文化。使用客户端可以不翻墙" 
+desc="世界上最大的电子图书馆。自由访问知识和文化。DNS修改为1.1.1.1和1.0.0.1 可以不翻墙" 
 logo="https://zh.can101.ru/img/favicons/favicon.svg"  
-link="https://zh.101ml.online/"  
+link="https://z-library.ec"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
@@ -90,6 +90,14 @@ title="LanguageGuide.org"
 desc="单词与图像关联" 
 logo="https://www.languageguide.org/favicon.ico"  
 link="https://www.languageguide.org/"  
+background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+title="Tbox导航"  
+desc="较为稳定的网页导航" 
+logo="https://tboxn.com/wp-content/uploads/2022/03/cropped-tboxlogo512.png"  
+link="https://www.tboxn.com/"  
 background="rgba(45, 46, 47, 0.15)" 
 />
 
