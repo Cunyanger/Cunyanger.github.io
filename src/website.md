@@ -348,6 +348,24 @@ background="rgba(45, 46, 47, 0.15)"
   background="rgba(45, 46, 47, 0.15)" 
 />
 
+
+
+<VPCard  
+  title="Inspira UI"  
+  desc="视觉特效组件库（粒子背景、光效、3D、卡片等），社区驱动" 
+  logo="https://cdn.inspira-ui.com/logo-dark.svg"  
+  link="https://inspira-ui.com/docs/cn"  
+  background="rgba(45, 46, 47, 0.15)" 
+/>
+
+<VPCard  
+  title="Vue Bits"  
+  desc="复制了 Inspira UI 的 Pro 组件（如 Fluid Cursor、Focus、Lightspeed 等）" 
+  logo="https://vue-bits.dev/favicon.ico"  
+  link="https://vue-bits.dev/"  
+  background="rgba(45, 46, 47, 0.15)" 
+/>
+
 </div>
 
 ## ⌨️开发
