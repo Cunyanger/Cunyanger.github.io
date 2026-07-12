@@ -16,10 +16,14 @@
     "@vuepress/plugin-slimsearch": "2.0.0-rc.120",
     "@vuepress/theme-default": "2.0.0-rc.120",
     "dart-sass": "^1.25.0",
+    "katex": "^0.16.47",
     "sass-embedded": "^1.93.3",
     "sass-loader": "^16.0.6",
     "vue": "^3.5.25",
     "vuepress": "2.0.0-rc.26",
     "vuepress-theme-hope": "2.0.0-rc.99"
+  },
+  "dependencies": {
+    "markdown-it-katex": "^2.0.3"
   }
 }

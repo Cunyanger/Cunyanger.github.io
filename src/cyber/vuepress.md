@@ -1,5 +1,5 @@
 ---
-title: Vuepress 框架使用
+title: Vuepress
 icon: fa6-brands:markdown
 order: 1
 category:
@@ -374,7 +374,6 @@ comment: false
 footer: false
 
 backtotop: false
-
 ---
 
 你可以通过设置页面的 Frontmatter，在页面禁用功能与布局。
@@ -405,7 +404,6 @@ category:
   - 使用指南
 tag:
   - 加密
-
 ---
 
 # 密码加密的文章
@@ -432,8 +430,6 @@ export default defineUserConfig({
 });
 ```
 
-
-
 自动部署脚本
 
 ```sh
@@ -455,7 +451,7 @@ git init
 git add -A
 git commit -m 'deploy'
 
-# 如果发布到 https://<USERNAME>.github.io 
+# 如果发布到 https://<USERNAME>.github.io
 git push -f https://github.com/Cunyanger/Cunyanger.github.io.git master:gh-pages
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>
@@ -476,7 +472,7 @@ pause
 | `markdown-it-tabs`        | 标签页切换内容                                    |
 | `markdown-it-gridtables`  | 网格表格（复杂布局）                              |
 
-------
+---
 
 ### 二、文本样式与增强
 
@@ -488,10 +484,10 @@ pause
 | `markdown-it-sup`      | 上标 `x^2^`                                    |
 | `markdown-it-abbr`     | 缩写定义 `*[HTML]: Hyper Text Markup Language` |
 | `markdown-it-deflist`  | 定义列表（术语+解释）                          |
-| `markdown-it-emoji`    | Emoji 表情 `:smile:` → 😄                       |
+| `markdown-it-emoji`    | Emoji 表情 `:smile:` → 😄                      |
 | `markdown-it-footnote` | 脚注 `[^1]`                                    |
 
-------
+---
 
 ### 三、代码与高亮
 
@@ -503,7 +499,7 @@ pause
 | `markdown-it-task-lists`             | 任务列表 `- [x] 已完成` |
 | `markdown-it-line-numbers`           | 代码行号                |
 
-------
+---
 
 ### 四、媒体与嵌入
 
@@ -514,7 +510,7 @@ pause
 | `markdown-it-image-figures` | 图片自动加 `<figure>` 标签和标题    |
 | `markdown-it-imsize`        | 控制图片尺寸 `![alt](url =100x200)` |
 
-------
+---
 
 ### 五、链接与导航
 
@@ -525,7 +521,7 @@ pause
 | `markdown-it-link-attributes`        | 给链接自动加属性（如 `target="_blank"`） |
 | `markdown-it-external-links`         | 外部链接自动识别并加图标                 |
 
-------
+---
 
 ### 六、图表与数学
 

@@ -1,5 +1,5 @@
 ---
-title: 命令激活Windows、Office
+title: Activate Windows、Office
 icon: ri:windows-fill
 category:
   - 使用指南
@@ -10,7 +10,6 @@ tag:
 
 # 此页面会在文章列表置顶
 sticky: true
-
 ---
 
 ## Windows、Office激活
@@ -51,8 +50,6 @@ irm https://get.activated.win | iex
 
 [一行命令永久激活Win11,Win10，Office, 无需找激活码，无需下载安装；目前看到最最简单，安全，可靠的激活方法，开源免费，一直有效 - jopny - 博客园](https://www.cnblogs.com/jopny/p/window_office_onekey_activate_free.html)
 
-
-
 ## 延迟更新
 
 > 若直接关闭更新服务会导致Windows其他服务无法正常下载，目前最佳策略为修改注册表无限延长更新时间
@@ -78,4 +75,3 @@ Windows Registry Editor Version 5.00
 
 "PauseUpdatesExpiryTime"="2050-08-11T00:56:45Z"
 ```
-
