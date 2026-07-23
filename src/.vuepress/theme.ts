@@ -7,7 +7,7 @@ export default hopeTheme({
   hostname: "https://blog.982345.xyz",
   favicon: "/favicon.svg",
   author: {
-    name: "Cunyanger",
+    name: "Yung",
     url: "https://blog.982345.xyz",
   },
   logo: "https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/ss0_bng.png",
@@ -45,7 +45,7 @@ export default hopeTheme({
   // 加密配置
   encrypt: {
     config: {
-      "/intro.html": {
+      "/intro": {
         hint: "我的名字",
         password: "wangchunyang",
       },

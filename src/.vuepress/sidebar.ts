@@ -3,7 +3,7 @@ import { sidebar } from "vuepress-theme-hope";
 export default sidebar({
   "/": [
     {
-      text: "Cyber Guide",
+      text: "Cyber",
       icon: "laptop-code",
       prefix: "cyber/",
       link: "cyber/",

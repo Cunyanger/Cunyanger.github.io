@@ -3,6 +3,7 @@ icon: mdi:account
 sidebar: false
 footer: false
 editLink: false
+article: false
 cover:
 ---
 

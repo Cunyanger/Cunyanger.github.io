@@ -1,6 +1,6 @@
 ---
 # 这是文章的标题
-title: Website Navigation
+title: Website Nav
 # 你可以自定义封面图片
 cover: https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/rain_sta_b.png
 # 这是页面的图标
@@ -16,8 +16,10 @@ tag:
 # 此页面会在文章列表置顶
 sticky: true
 sidebar: false
+toc: true
 lastUpdated: false
 contributors: false
+containerClass: website-nav-page
 ---
 
 ## 📖Books & Media
@@ -352,8 +354,6 @@ background="rgba(45, 46, 47, 0.15)"
   link="https://iconpark.oceanengine.com/home"  
   background="rgba(45, 46, 47, 0.15)" 
 />
-
-
 
 <VPCard  
   title="Inspira UI"  
