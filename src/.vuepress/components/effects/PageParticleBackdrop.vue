@@ -6,6 +6,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { withBase } from 'vuepress/client'
 import { useRoute } from 'vue-router'
 
 import ParticleBackground from './ParticleBackground.vue'
@@ -14,11 +15,32 @@ const route = useRoute()
 const isMounted = ref(false)
 const currentTheme = ref('light')
 
+const stripBase = (pathname) => {
+  const basePath = new URL(withBase('/'), window.location.origin).pathname
+  const normalizedBase = basePath.endsWith('/')
+    ? basePath.slice(0, -1)
+    : basePath
+
+  if (!normalizedBase || normalizedBase === '/') return pathname || '/'
+  if (!pathname.startsWith(`${normalizedBase}/`) && pathname !== normalizedBase) {
+    return pathname || '/'
+  }
+
+  const stripped = pathname.slice(normalizedBase.length) || '/'
+
+  return stripped.startsWith('/') ? stripped : `/${stripped}`
+}
+
+const getCurrentPath = () =>
+  route?.path ||
+  (typeof window === 'undefined' ? '/' : stripBase(window.location.pathname))
+
 const visible = computed(
   () =>
     isMounted.value &&
     currentTheme.value === 'dark' &&
-    (/^\/article\/[^/]+\.html$/.test(route.path) || route.path.startsWith('/article/')),
+    (/^\/article\/[^/]+\.html$/.test(getCurrentPath()) ||
+      getCurrentPath().startsWith('/article/')),
 )
 
 let stopWatching = () => {}

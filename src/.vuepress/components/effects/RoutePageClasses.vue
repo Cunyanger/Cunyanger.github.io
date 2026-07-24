@@ -22,15 +22,19 @@ const ignoredDetailPaths = new Set([
   "/posts/",
 ]);
 
+const getCurrentPath = () =>
+  route?.path ||
+  (typeof window === "undefined" ? "/" : window.location.pathname);
+
 const isArticleDetailPage = () => {
-  const path = route.path;
+  const path = getCurrentPath();
 
   if (ignoredDetailPaths.has(path)) return false;
   if (ignoredDetailPrefixes.some((prefix) => path.startsWith(prefix))) {
     return false;
   }
 
-  return route.meta?.type === "article" || path.endsWith(".html");
+  return route?.meta?.type === "article" || path.endsWith(".html");
 };
 
 const syncPageClasses = () => {
@@ -38,7 +42,7 @@ const syncPageClasses = () => {
 
   document.documentElement.classList.toggle(
     "article-index-page",
-    route.path.startsWith("/article/"),
+    getCurrentPath().startsWith("/article/"),
   );
   document.documentElement.classList.toggle(
     "article-detail-page",

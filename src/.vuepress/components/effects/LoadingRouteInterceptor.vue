@@ -1,21 +1,14 @@
 <script setup>
 import { onBeforeUnmount, onMounted } from "vue";
-import { useRoute, withBase } from "vuepress/client";
+import { withBase } from "vuepress/client";
 import { useRouter } from "vue-router";
 
-const route = useRoute();
 const router = useRouter();
 
 const getCurrentSearch = () => {
-  const queryStart = route.fullPath.indexOf("?");
-  const hashStart = route.fullPath.indexOf("#");
+  if (typeof window === "undefined") return "";
 
-  if (queryStart === -1) return "";
-
-  return route.fullPath.slice(
-    queryStart,
-    hashStart === -1 ? undefined : hashStart,
-  );
+  return window.location.search;
 };
 
 const stripBase = (pathname) => {
@@ -65,7 +58,11 @@ const resolveInternalTarget = (anchor) => {
   if (extension && extension !== "html") return "";
   if (pathname === "/loading/" || pathname === "/loading.html") return "";
 
-  if (pathname === route.path && url.search === getCurrentSearch()) {
+  if (
+    typeof window !== "undefined" &&
+    pathname === stripBase(window.location.pathname) &&
+    url.search === getCurrentSearch()
+  ) {
     return "";
   }
 
@@ -85,9 +82,16 @@ const handleDocumentClick = (event) => {
 
   event.preventDefault();
   event.stopImmediatePropagation();
-  router
-    .push(`/loading/?to=${encodeURIComponent(internalTarget)}`)
-    .catch(() => {});
+
+  const loadingTarget = `/loading/?to=${encodeURIComponent(internalTarget)}`;
+
+  if (router?.push) {
+    router.push(loadingTarget).catch(() => {
+      window.location.href = withBase(loadingTarget);
+    });
+  } else {
+    window.location.href = withBase(loadingTarget);
+  }
 };
 
 onMounted(() => {

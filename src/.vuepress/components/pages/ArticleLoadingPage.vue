@@ -13,49 +13,34 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { withBase } from "vuepress/client";
+import { useRouter } from "vue-router";
 
 import ParticleBackground from "../effects/ParticleBackground.vue";
 import AnimatedCircularProgressbar from "../ui/AnimatedCircularProgressbar.vue";
 
-const route = useRoute();
 const router = useRouter();
 const progress = ref(0);
 
 let animationFrame = 0;
 let startTime = 0;
 let isCompleting = false;
+let redirectTimer = 0;
 
-const pendingDuration = 1200;
+const pendingDuration = 900;
 const completeDuration = 600;
-const pendingProgressLimit = 97;
+const pendingProgressLimit = 92;
 
 const resolveTarget = () => {
-  const rawTarget = Array.isArray(route.query.to)
-    ? route.query.to[0]
-    : route.query.to;
+  const rawTarget =
+    typeof window === "undefined"
+      ? ""
+      : new URLSearchParams(window.location.search).get("to");
   const target = typeof rawTarget === "string" ? rawTarget : "/article/";
 
   return target.startsWith("/") && !target.startsWith("//")
     ? target
     : "/article/";
-};
-
-const getRouteComponents = (record) => {
-  if (record.components) return Object.values(record.components);
-  if (record.component) return [record.component];
-
-  return [];
-};
-
-const preloadTargetRoute = async (target) => {
-  const resolved = router.resolve(target);
-  const loaders = resolved.matched
-    .flatMap(getRouteComponents)
-    .filter((component) => typeof component === "function")
-    .map((loader) => loader());
-
-  await Promise.all(loaders);
 };
 
 const animatePending = (timestamp) => {
@@ -95,7 +80,13 @@ const completeAndRedirect = (target) => {
       animationFrame = window.requestAnimationFrame(animateComplete);
     } else {
       progress.value = 100;
-      router.replace(target);
+      if (router?.replace) {
+        router.replace(target).catch(() => {
+          window.location.href = withBase(target);
+        });
+      } else {
+        window.location.href = withBase(target);
+      }
     }
   };
 
@@ -106,12 +97,13 @@ onMounted(() => {
   const target = resolveTarget();
 
   animationFrame = window.requestAnimationFrame(animatePending);
-  preloadTargetRoute(target).finally(() => {
+  redirectTimer = window.setTimeout(() => {
     completeAndRedirect(target);
-  });
+  }, pendingDuration);
 });
 
 onBeforeUnmount(() => {
+  window.clearTimeout(redirectTimer);
   window.cancelAnimationFrame(animationFrame);
 });
 </script>

@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
 })
 
 watch(
-  () => route.path,
+  () => route?.path,
   async () => {
     await nextTick()
     window.requestAnimationFrame(updateProgress)
