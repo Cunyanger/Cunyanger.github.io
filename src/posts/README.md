@@ -9,12 +9,27 @@ article: false
 
 <div class="blog-grid">
   <article class="post-card">
-    <p class="post-meta">2026-07-22 路 VuePress 路 8 分钟</p>
+    <p class="post-meta">2026-07-27 · AI 原生应用 · 20 分钟</p>
+    <h3><a href="/posts/springboot-vue-langchain-electricity-price-battery-agent.html">Spring Boot + Vue 对接 LangChain：电价预测与电池充放电 Agent 实现方案</a></h3>
+    <p>设计一个电价预测与储能充放电 Agent，覆盖 Spring Boot 后端、Vue 管理端、LangChain 编排、预测模型、优化器、安全校验和设备指令闭环。</p>
+  </article>
+  <article class="post-card">
+    <p class="post-meta">2026-07-27 · AI 原生应用 · 18 分钟</p>
+    <h3><a href="/posts/langchain-1-3-bailian-model-routing-guide.html">LangChain 1.3 到旧版本更新梳理：接入阿里百炼、模型调用和动态模型选择</a></h3>
+    <p>按 LangChain 1.3.x 的新写法梳理版本变化、阿里百炼 OpenAI 兼容模式接入、固定模型调用和运行时动态切换模型。</p>
+  </article>
+  <article class="post-card">
+    <p class="post-meta">2026-07-27 · Java · 22 分钟</p>
+    <h3><a href="/posts/spring-boot-modern-guide.html">Spring Boot 最新通俗参考指南：从 2.x 到 4.1 的代码化理解</a></h3>
+    <p>以旧版 Spring Boot 参考指南为线索，用 Spring Boot 4.1 的现代写法重新讲解启动、自动配置、配置、Web、数据访问、测试、监控和部署。</p>
+  </article>
+  <article class="post-card">
+    <p class="post-meta">2026-07-22 · VuePress · 8 分钟</p>
     <h3><a href="/posts/vuepress-inspira-timeline-page.html">VuePress 时间线页面接入 Inspira UI Timeline</a></h3>
     <p>拆解时间线页如何接入官方 Timeline 结构、如何按年份分组文章、以及如何把博客默认页面改成统一的首页视觉风格。</p>
   </article>
   <article class="post-card">
-    <p class="post-meta">2026-07-22 路 VuePress 路 7 分钟</p>
+    <p class="post-meta">2026-07-22 · VuePress · 7 分钟</p>
     <h3><a href="/posts/vuepress-inspira-dock-component.html">VuePress 博主链接 Dock 组件接入详解</a></h3>
     <p>拆解首页博主信息背面的 Dock 链接条，从官方参数、悬停放大逻辑到如何把多个平台入口接进翻转卡片底部。</p>
   </article>
@@ -95,6 +110,11 @@ article: false
 <ul class="tag-list">
   <li>VuePress</li>
   <li>Inspira UI</li>
+  <li>LangChain</li>
+  <li>Spring Boot</li>
+  <li>阿里百炼</li>
+  <li>储能</li>
+  <li>电价预测</li>
   <li>交互动效</li>
   <li>字体</li>
   <li>样式</li>

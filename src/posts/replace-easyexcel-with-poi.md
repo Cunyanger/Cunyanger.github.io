@@ -1,20 +1,45 @@
-﻿# Spring Boot 3.5 鏇挎崲 EasyExcel锛氭敼鐢?Apache POI 瀹炵幇 Excel 瀵煎叆瀵煎嚭
+---
+title: Spring Boot 3.5 替换 EasyExcel：改用 Apache POI 实现 Excel 导入导出
+date: 2026-07-24
+category: Java
+tag:
+  - Spring Boot
+  - Excel
+  - Apache POI
+  - EasyExcel
+isOriginal: true
+excerpt: 记录在 Spring Boot 3.5 项目中移除 EasyExcel、改用 Apache POI 和自定义注解完成 Excel 导入导出的完整改造过程。
+---
 
-## 鑳屾櫙
+# Spring Boot 3.5 替换 EasyExcel：改用 Apache POI 实现 Excel 导入导出
 
-褰撳墠椤圭洰宸茬粡鍗囩骇鍒?Spring Boot 3.5.x銆傚師鏉ョ殑 Excel 鍔熻兘渚濊禆 `com.alibaba:easyexcel:3.3.4`锛屽畠浼氫紶閫掕緝鏃х増鏈殑 Apache POI 渚濊禆锛屽湪鏂?Spring Boot銆丣ava 21 鍜屽畨鍏ㄤ緷璧栨寔缁崌绾х殑鍦烘櫙涓嬶紝鍚庣画缁存姢鎴愭湰浼氬彉楂樸€?
-杩欐鏀归€犵殑鐩爣鏄細
+## 背景
 
-- 鍘绘帀 EasyExcel 渚濊禆锛屼笉鍐嶄娇鐢?`com.alibaba.excel.*` 鍖呫€?- 浣跨敤 Apache POI `poi-ooxml` 鐩存帴璇诲啓 `.xlsx`銆?- 淇濈暀鍘熸潵鐨?Controller 璋冪敤涔犳儻锛屽鍑哄拰瀵煎叆浠嶇劧閫氳繃涓€涓?helper 瀹屾垚銆?- 鎶?Excel 瀛楁鍏冩暟鎹敼鎴愰」鐩嚜宸辩殑娉ㄨВ锛岄伩鍏嶄笟鍔?DTO 缁戝畾绗笁鏂规鏋舵敞瑙ｃ€?- 鍚屾鏇存柊浠ｇ爜鐢熸垚妯℃澘锛屽悗缁敓鎴愮殑鏂版ā鍧楅粯璁や娇鐢ㄦ柊 Excel 鏂规銆?
-## 鏀瑰啓鎬濊矾
+当前项目已经升级到 Spring Boot 3.5.x。原来的 Excel 功能依赖 `com.alibaba:easyexcel:3.3.4`，它会传递较旧版本的 Apache POI 依赖。在新 Spring Boot、Java 21 和安全依赖持续升级的场景下，后续维护成本会变高。
 
-### 1. 渚濊禆灞傞潰
+这次改造的目标是：
 
-EasyExcel 鐨勪紭鍔挎槸灏佽杈冮珮锛屼絾椤圭洰褰撳墠 Excel 闇€姹傛瘮杈冩槑纭細
+- 去掉 EasyExcel 依赖，不再使用 `com.alibaba.excel.*` 包。
+- 使用 Apache POI `poi-ooxml` 直接读写 `.xlsx`。
+- 保留原来的 Controller 调用习惯，导出和导入仍然通过一个 helper 完成。
+- 把 Excel 字段元数据改成项目自己的注解，避免业务 DTO 绑定第三方框架注解。
+- 同步更新代码生成模板，后续生成的新模块默认使用新 Excel 方案。
 
-- 鏍规嵁 DTO 瀛楁瀵煎嚭琛ㄥご鍜屾暟鎹€?- 鏍规嵁绗竴琛岃〃澶存妸 Excel 鍐呭璇诲洖 DTO銆?- 鏀寔甯歌绫诲瀷锛屼緥濡?`String`銆佹暟瀛椼€乣Boolean`銆乣LocalDateTime`銆乣LocalDate`銆乣Instant`銆?- 鏀寔蹇界暐鍐呴儴瀛楁锛屼緥濡?`id`銆佸璁″瓧娈点€佹爲褰?`children`銆?
-杩欎簺鑳藉姏鐢?Apache POI 鍙互鐩存帴瀹炵幇锛屼笉闇€瑕佺户缁繚鐣?EasyExcel銆?
-鐖跺伐绋嬬粺涓€绠＄悊 POI 鐗堟湰锛?
+## 改写思路
+
+### 1. 依赖层面
+
+EasyExcel 的优势是封装较高，但项目当前 Excel 需求比较明确：
+
+- 根据 DTO 字段导出表头和数据。
+- 根据第一行表头把 Excel 内容读回 DTO。
+- 支持常见类型，例如 `String`、数字、`Boolean`、`LocalDateTime`、`LocalDate`、`Instant`。
+- 支持忽略内部字段，例如 `id`、审计字段、树形 `children`。
+
+这些能力用 Apache POI 可以直接实现，不需要继续保留 EasyExcel。
+
+父工程统一管理 POI 版本：
+
 ```xml
 <properties>
     <poi.version>5.5.1</poi.version>
@@ -31,7 +56,8 @@ EasyExcel 鐨勪紭鍔挎槸灏佽杈冮珮锛屼絾椤圭洰褰撳墠 Excel 
 </dependencyManagement>
 ```
 
-瀹為檯璇诲啓 Excel 鐨?`yin-admin` 妯″潡寮曞叆锛?
+实际读写 Excel 的 `yin-admin` 模块引入：
+
 ```xml
 <dependency>
     <groupId>org.apache.poi</groupId>
@@ -39,12 +65,14 @@ EasyExcel 鐨勪紭鍔挎槸灏佽杈冮珮锛屼絾椤圭洰褰撳墠 Excel 
 </dependency>
 ```
 
-`yin-system` 涓嶅啀渚濊禆 EasyExcel銆侱TO 鍙緷璧?`yin-common` 涓殑椤圭洰鑷畾涔夋敞瑙ｃ€?
-### 2. 娉ㄨВ灞傞潰
+`yin-system` 不再依赖 EasyExcel。DTO 只依赖 `yin-common` 中的项目自定义注解。
 
-鍘熸潵 DTO 閲屼娇鐢ㄧ殑鏄?EasyExcel 娉ㄨВ锛?
+### 2. 注解层面
+
+原来 DTO 里使用的是 EasyExcel 注解：
+
 ```java
-@ExcelProperty("鐢ㄦ埛鍚?)
+@ExcelProperty("用户名")
 @ColumnWidth(20)
 private String login;
 
@@ -52,64 +80,86 @@ private String login;
 private String id;
 ```
 
-鐜板湪鏀规垚椤圭洰鑷繁鐨勬敞瑙ｏ細
+现在改成项目自己的注解：
 
 ```java
-@ExcelColumn("鐢ㄦ埛鍚?)
+@ExcelColumn("用户名")
 private String login;
 
 @ExcelIgnore
 private String id;
 ```
 
-涓や釜娉ㄨВ鏀惧湪 `yin-common`锛?
+两个注解放在 `yin-common`：
+
 ```text
 yin-common/src/main/java/com/yinyang/yin/excel
-鈹溾攢鈹€ ExcelColumn.java
-鈹斺攢鈹€ ExcelIgnore.java
+├── ExcelColumn.java
+└── ExcelIgnore.java
 ```
 
-`@ExcelColumn` 璐熻矗澹版槑琛ㄥご鍚嶅拰鍒楀锛?
+`@ExcelColumn` 负责声明表头名和列宽：
+
 ```java
-@ExcelColumn(value = "鐢ㄦ埛鍚?, width = 20)
+@ExcelColumn(value = "用户名", width = 20)
 ```
 
-濡傛灉娌℃湁鍐?`width`锛岄粯璁や娇鐢?`20`銆傝繖绛変环浜庡師鏉ョ殑 `@ColumnWidth(20)` 甯歌鐢ㄦ硶銆?
-### 3. Helper 灞傞潰
+如果没有写 `width`，默认使用 `20`。这等价于原来的 `@ColumnWidth(20)` 常规用法。
 
-鍘熸潵鐨勫伐鍏风被鏄細
+### 3. Helper 层面
+
+原来的工具类是：
 
 ```java
 EasyExcelHelper.export(...)
 EasyExcelHelper.readToList(...)
 ```
 
-鐜板湪鏇挎崲涓猴細
+现在替换为：
 
 ```java
 ExcelHelper.export(...)
 ExcelHelper.readToList(...)
 ```
 
-鏂?helper 浣嶇疆锛?
+新 helper 位置：
+
 ```text
 yin-admin/src/main/java/com/yinyang/yin/helper/ExcelHelper.java
 ```
 
-瀵煎嚭娴佺▼锛?
-1. 鏍规嵁 DTO class 鍙嶅皠璇诲彇瀛楁銆?2. 璺宠繃 `@ExcelIgnore` 瀛楁銆?3. 濡傛灉瀛楁鏈?`@ExcelColumn`锛岀敤娉ㄨВ鍊间綔涓鸿〃澶达紱鍚﹀垯鐢ㄥ瓧娈靛悕浣滀负琛ㄥご銆?4. 鍒涘缓 `XSSFWorkbook` 鍜?sheet銆?5. 鍐欏叆琛ㄥご銆佸喕缁撻琛屻€佽缃熀纭€鏍峰紡鍜屽垪瀹姐€?6. 鍐欏叆鏁版嵁琛屻€?7. 閫氳繃 `HttpServletResponse` 杈撳嚭 `.xlsx` 鏂囦欢銆?
-瀵煎叆娴佺▼锛?
-1. 浣跨敤 `WorkbookFactory.create(file.getInputStream())` 璇诲彇涓婁紶鏂囦欢銆?2. 璇诲彇绗竴涓?sheet銆?3. 鐢ㄧ涓€琛岃〃澶村尮閰?DTO 瀛楁銆?4. 浠庣浜岃寮€濮嬮€愯璇诲彇銆?5. 鎸夊瓧娈电被鍨嬭浆鎹㈠崟鍏冩牸鍊笺€?6. 鍙嶅皠鍒涘缓 DTO 瀹炰緥骞跺啓鍏ュ瓧娈点€?7. 杩斿洖 `List<T>` 缁欎笟鍔?service 鎵归噺淇濆瓨鎴栨洿鏂般€?
-## 鏀瑰啓姝ラ
+导出流程：
 
-### 1. 鏇挎崲 Maven 渚濊禆
+1. 根据 DTO class 反射读取字段。
+2. 跳过 `@ExcelIgnore` 字段。
+3. 如果字段有 `@ExcelColumn`，用注解值作为表头；否则用字段名作为表头。
+4. 创建 `XSSFWorkbook` 和 sheet。
+5. 写入表头、冻结首行、设置基础样式和列宽。
+6. 写入数据行。
+7. 通过 `HttpServletResponse` 输出 `.xlsx` 文件。
 
-鏍?`pom.xml` 鍒犻櫎锛?
+导入流程：
+
+1. 使用 `WorkbookFactory.create(file.getInputStream())` 读取上传文件。
+2. 读取第一个 sheet。
+3. 用第一行表头匹配 DTO 字段。
+4. 从第二行开始逐行读取。
+5. 按字段类型转换单元格值。
+6. 反射创建 DTO 实例并写入字段。
+7. 返回 `List<T>` 给业务 service 批量保存或更新。
+
+## 改写步骤
+
+### 1. 替换 Maven 依赖
+
+从 `pom.xml` 删除：
+
 ```xml
 <easyexcel.version>3.3.4</easyexcel.version>
 ```
 
-浠ュ強锛?
+以及：
+
 ```xml
 <dependency>
     <groupId>com.alibaba</groupId>
@@ -118,12 +168,13 @@ yin-admin/src/main/java/com/yinyang/yin/helper/ExcelHelper.java
 </dependency>
 ```
 
-鏂板锛?
+新增：
+
 ```xml
 <poi.version>5.5.1</poi.version>
 ```
 
-鍜岋細
+和：
 
 ```xml
 <dependency>
@@ -133,7 +184,8 @@ yin-admin/src/main/java/com/yinyang/yin/helper/ExcelHelper.java
 </dependency>
 ```
 
-`yin-admin/pom.xml` 鍒犻櫎 EasyExcel锛屾柊澧?POI锛?
+`yin-admin/pom.xml` 删除 EasyExcel，新增 POI：
+
 ```xml
 <dependency>
     <groupId>org.apache.poi</groupId>
@@ -141,9 +193,12 @@ yin-admin/src/main/java/com/yinyang/yin/helper/ExcelHelper.java
 </dependency>
 ```
 
-`yin-system/pom.xml` 鍒犻櫎 EasyExcel锛屽洜涓?DTO 涓嶅簲璇ヤ负浜嗘敞瑙ｄ緷璧?Excel 璇诲啓搴撱€?
-### 2. 鏂板椤圭洰鑷畾涔夋敞瑙?
-鏂板 `ExcelColumn`锛?
+`yin-system/pom.xml` 删除 EasyExcel，因为 DTO 不应该为了注解依赖 Excel 读写库。
+
+### 2. 新增项目自定义注解
+
+新增 `ExcelColumn`：
+
 ```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -153,7 +208,8 @@ public @interface ExcelColumn {
 }
 ```
 
-鏂板 `ExcelIgnore`锛?
+新增 `ExcelIgnore`：
+
 ```java
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -161,40 +217,45 @@ public @interface ExcelIgnore {
 }
 ```
 
-### 3. 鏇挎崲 DTO 娉ㄨВ
+### 3. 替换 DTO 注解
 
-鎵归噺鏇挎崲瀵煎叆锛?
+批量替换导入：
+
 ```java
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
 ```
 
-鏀逛负锛?
+改为：
+
 ```java
 import com.yinyang.yin.excel.ExcelColumn;
 import com.yinyang.yin.excel.ExcelIgnore;
 ```
 
-鎵归噺鏇挎崲娉ㄨВ锛?
+批量替换注解：
+
 ```java
-@ExcelProperty("瀛楀吀鍚嶇О")
+@ExcelProperty("字典名称")
 @ColumnWidth(20)
 ```
 
-鏀逛负锛?
+改为：
+
 ```java
-@ExcelColumn("瀛楀吀鍚嶇О")
+@ExcelColumn("字典名称")
 ```
 
-濡傛灉鏌愪釜瀛楁闇€瑕佷笉鍚屽垪瀹斤紝鍙互鍐欐垚锛?
+如果某个字段需要不同列宽，可以写成：
+
 ```java
-@ExcelColumn(value = "澶囨敞璇存槑", width = 40)
+@ExcelColumn(value = "备注说明", width = 40)
 ```
 
-### 4. 鏇挎崲 Controller 璋冪敤
+### 4. 替换 Controller 调用
 
-鍘熻皟鐢細
+原调用：
 
 ```java
 import com.yinyang.yin.helper.EasyExcelHelper;
@@ -203,7 +264,8 @@ EasyExcelHelper.export(response, "user_export", dataList, UserDTO.class, "user")
 List<UserDTO> dataList = EasyExcelHelper.readToList(file, UserDTO.class);
 ```
 
-鏀逛负锛?
+改为：
+
 ```java
 import com.yinyang.yin.helper.ExcelHelper;
 
@@ -211,52 +273,57 @@ ExcelHelper.export(response, "user_export", dataList, UserDTO.class, "user");
 List<UserDTO> dataList = ExcelHelper.readToList(file, UserDTO.class);
 ```
 
-### 5. 鏇存柊浠ｇ爜鐢熸垚妯℃澘
+### 5. 更新代码生成模板
 
-闇€瑕佸悓姝ヤ慨鏀癸細
+需要同步修改：
 
 ```text
 yin-generator/src/main/resources/templates/dto.java.vm
 yin-generator/src/main/resources/templates/controller.java.vm
 ```
 
-DTO 妯℃澘鏀逛负鐢熸垚锛?
+DTO 模板改为生成：
+
 ```java
 import com.yinyang.yin.excel.ExcelColumn;
 import com.yinyang.yin.excel.ExcelIgnore;
 ```
 
-Controller 妯℃澘鏀逛负鐢熸垚锛?
+Controller 模板改为生成：
+
 ```java
 import com.yinyang.yin.helper.ExcelHelper;
 ```
 
-杩欐牱鍚庣画閫氳繃浠ｇ爜鐢熸垚鍣ㄥ垱寤虹殑鏂颁笟鍔℃ā鍧楋紝浼氱洿鎺ヤ娇鐢?POI 鏂规銆?
-### 6. 鍒犻櫎鏃?Helper
+这样后续通过代码生成器创建的新业务模块，会直接使用 POI 方案。
 
-鍒犻櫎锛?
+### 6. 删除旧 Helper
+
+删除：
+
 ```text
 yin-admin/src/main/java/com/yinyang/yin/helper/EasyExcelHelper.java
 ```
 
-鏂板锛?
+新增：
+
 ```text
 yin-admin/src/main/java/com/yinyang/yin/helper/ExcelHelper.java
 ```
 
-## 浣跨敤鏂规硶
+## 使用方法
 
-### 1. DTO 瀛楁澹版槑
+### 1. DTO 字段声明
 
 ```java
 public class UserDTO {
-    @ExcelColumn("鐢ㄦ埛鍚?)
+    @ExcelColumn("用户名")
     private String login;
 
-    @ExcelColumn("閭")
+    @ExcelColumn("邮箱")
     private String email;
 
-    @ExcelColumn("鏄惁婵€娲?)
+    @ExcelColumn("是否激活")
     private Boolean activated;
 
     @ExcelIgnore
@@ -264,12 +331,15 @@ public class UserDTO {
 }
 ```
 
-瀵煎嚭鏃朵細鐢熸垚涓夊垪锛?
-```text
-鐢ㄦ埛鍚?| 閭 | 鏄惁婵€娲?```
+导出时会生成三列：
 
-`id` 涓嶄細瀵煎嚭锛屼篃涓嶄細浠庡鍏ユ枃浠惰鍙栥€?
-### 2. 瀵煎嚭鎺ュ彛
+```text
+用户名 | 邮箱 | 是否激活
+```
+
+`id` 不会导出，也不会从导入文件读取。
+
+### 2. 导出接口
 
 ```java
 @GetMapping("/export")
@@ -283,19 +353,21 @@ public void export(UserQuery query, HttpServletResponse response) {
 }
 ```
 
-鐢熸垚鐨勬枃浠跺悕鏍煎紡锛?
+生成的文件名格式：
+
 ```text
 user_export_yyyy-MM-dd HH:mm:ss.xlsx
 ```
 
-鏂囦欢鍝嶅簲澶翠娇鐢細
+文件响应头使用：
 
 ```text
 Content-Disposition: attachment; filename*=utf-8''xxx.xlsx
 ```
 
-鍙互姝ｇ‘澶勭悊涓枃鏂囦欢鍚嶃€?
-### 3. 瀵煎叆鎺ュ彛
+可以正确处理中文文件名。
+
+### 3. 导入接口
 
 ```java
 @PostMapping("/import")
@@ -310,74 +382,95 @@ public Result<Void> importExcel(@RequestParam("file") MultipartFile file) {
 }
 ```
 
-瀵煎叆鏂囦欢绗竴琛屽繀椤绘槸琛ㄥご銆傝〃澶翠細浼樺厛鍖归厤 `@ExcelColumn` 鐨勫€硷紝涔熷吋瀹瑰瓧娈靛悕銆?
-渚嬪 DTO 鏄細
+导入文件第一行必须是表头。表头会优先匹配 `@ExcelColumn` 的值，也兼容字段名。
+
+例如 DTO 是：
 
 ```java
-@ExcelColumn("鐢ㄦ埛鍚?)
+@ExcelColumn("用户名")
 private String login;
 ```
 
-瀵煎叆琛ㄥご鍙互鏄細
+导入表头可以是：
 
 ```text
-鐢ㄦ埛鍚?```
+用户名
+```
 
-涔熷彲浠ユ槸锛?
+也可以是：
+
 ```text
 login
 ```
 
-### 4. 鏀寔鐨勬暟鎹被鍨?
-褰撳墠 helper 宸插鐞嗚繖浜涘父鐢ㄧ被鍨嬶細
+### 4. 支持的数据类型
+
+当前 helper 已处理这些常用类型：
 
 - `String`
 - `Boolean` / `boolean`
-- `Byte`銆乣Short`銆乣Integer`銆乣Long`
-- `Float`銆乣Double`銆乣BigDecimal`
+- `Byte`、`Short`、`Integer`、`Long`
+- `Float`、`Double`、`BigDecimal`
 - `LocalDateTime`
 - `LocalDate`
 - `Instant`
 - `Enum`
 
-甯冨皵鍊煎鍏ユ椂鍏煎锛?
+布尔值导入时兼容：
+
 ```text
 true / false
 1 / 0
-鏄?/ 鍚?yes / no
+是 / 否
+yes / no
 y / n
 ```
 
-鏃ユ湡鏃堕棿榛樿浣跨敤锛?
+日期时间默认使用：
+
 ```text
 yyyy-MM-dd HH:mm:ss
 ```
 
-濡傛灉瀛楁涓婂瓨鍦細
+如果字段上存在：
 
 ```java
 @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 ```
 
-瀵煎叆鏃朵篃浼氫紭鍏堝皾璇曡鏍煎紡銆?
-## 楠岃瘉鏂瑰紡
+导入时也会优先尝试该格式。
 
-鎵ц锛?
+## 验证方式
+
+执行：
+
 ```powershell
 .\mvnw.cmd -q test
 ```
 
-鏈鏂板浜嗕竴涓獎娴嬭瘯锛?
+本次新增了一个窄测试：
+
 ```text
 yin-admin/src/test/java/com/yinyang/yin/helper/ExcelHelperTests.java
 ```
 
-娴嬭瘯鍐呭锛?
-- 鏋勯€?DTO 鏁版嵁銆?- 閫氳繃 `ExcelHelper.export` 瀵煎嚭 xlsx銆?- 鎶婂鍑虹殑瀛楄妭閲嶆柊鍖呰鎴?`MockMultipartFile`銆?- 閫氳繃 `ExcelHelper.readToList` 璇诲洖 DTO銆?- 鏍￠獙鏅€氬瓧娈佃兘璇诲洖锛宍@ExcelIgnore` 瀛楁涓嶄細璇诲洖銆?
-## 娉ㄦ剰浜嬮」
+测试内容：
 
-1. 杩欏 helper 闈㈠悜褰撳墠鍚庡彴绠＄悊绯荤粺鐨勫父瑙勫鍏ュ鍑猴紝涓嶆槸瀹屾暣鏇夸唬 EasyExcel 鐨勬墍鏈夐珮绾ц兘鍔涖€?2. 濡傛灉鍚庣画瑕佸鐞嗚秴澶?Excel锛屽簲璇ュ啀鎵╁睍涓?POI SAX 娴佸紡璇诲彇锛岄伩鍏嶄竴娆℃€ф妸 workbook 鏀惧叆鍐呭瓨銆?3. 濡傛灉闇€瑕佷笅鎷夋銆佸悎骞跺崟鍏冩牸銆佸 sheet銆佸鏉傛牱寮忥紝寤鸿鍦?`ExcelHelper` 涓寜涓氬姟鍦烘櫙缁х画鎵╁睍锛屼笉瑕佹妸绗笁鏂规敞瑙ｉ噸鏂版硠婕忓埌 DTO銆?4. 瀵煎叆鏂囦欢鐨勭涓€琛屽繀椤绘槸琛ㄥご锛屽惁鍒欏瓧娈垫棤娉曠ǔ瀹氬尮閰嶃€?5. 浠ｇ爜鐢熸垚妯℃澘宸茬粡鍚屾鏇存柊锛屾柊鐢熸垚浠ｇ爜浼氶粯璁や娇鐢?`ExcelHelper` 鍜岄」鐩嚜瀹氫箟娉ㄨВ銆?
-## 鍙傝€?
-- Apache POI 瀹樼綉锛歨ttps://poi.apache.org/
-- Apache POI `poi-ooxml` Maven Central锛歨ttps://central.sonatype.com/artifact/org.apache.poi/poi-ooxml/5.5.1
+- 构造 DTO 数据。
+- 通过 `ExcelHelper.export` 导出 xlsx。
+- 把导出的字节重新包装成 `MockMultipartFile`。
+- 通过 `ExcelHelper.readToList` 读回 DTO。
+- 校验普通字段能读回，`@ExcelIgnore` 字段不会读回。
 
+## 注意事项
+
+1. 这套 helper 面向当前后台管理系统的常规导入导出，不是完整替代 EasyExcel 的所有高级能力。
+2. 如果后续要处理超大 Excel，应该再扩展成 POI SAX 流式读取，避免一次性把 workbook 放入内存。
+3. 如果需要下拉框、合并单元格、多 sheet、复杂样式，建议在 `ExcelHelper` 中按业务场景继续扩展，不要把第三方注解重新泄漏到 DTO。
+4. 导入文件的第一行必须是表头，否则字段无法稳定匹配。
+5. 代码生成模板已经同步更新，新生成代码会默认使用 `ExcelHelper` 和项目自定义注解。
+
+## 参考资料
+
+- [Apache POI 官网](https://poi.apache.org/)
+- [Apache POI poi-ooxml Maven Central](https://central.sonatype.com/artifact/org.apache.poi/poi-ooxml/5.5.1)
