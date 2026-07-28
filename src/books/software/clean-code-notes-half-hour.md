@@ -1,7 +1,10 @@
 ---
 title: 代码整洁之道笔记
 date: 2026-07-28
-category: 编程
+article: false
+icon: pen-to-square
+category:
+  - 读书
 cover: https://ts4.tc.mm.bing.net/th/id/OIP-C.p4vtKQ5m0iQrpKZmr1BVTAHaJT?r=0&rs=1&pid=ImgDetMain&o=7&rm=3
 tag:
   - Clean Code
