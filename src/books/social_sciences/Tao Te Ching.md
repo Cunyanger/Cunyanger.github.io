@@ -5,7 +5,6 @@ article: false
 icon: pen-to-square
 bookCategory: 社科
 bookAuthor: 马王堆汉墓
-bookColor: zinc
 bookCover: https://ts4.tc.mm.bing.net/th/id/OIP-C.68TCafj9-WDcv7yw6hncHwHaKl?r=0&rs=1&pid=ImgDetMain&o=7&rm=3
 cover: https://gcore.jsdelivr.net/gh/Cunyanger/pic_bed@master/images/rain_sta_b.png
 category:
@@ -46,14 +45,14 @@ excerpt: 先学做人再学做事
 
 > ==上士闻道，勤能行之。中士闻道，若存若亡。下士闻道，大笑之。弗笑，不足以为道。==
 
->是以建言有之曰：明道如昧，进道如退，夷道如纇。
+> 是以建言有之曰：明道如昧，进道如退，夷道如纇。
 
->上德如谷，大白如辱，广德如不足。建德如偷，质真如渝。大方无隅，大器免成，大音希声，大象无形，道褒无名。夫唯道，善始且善成。
+> 上德如谷，大白如辱，广德如不足。建德如偷，质真如渝。大方无隅，大器免成，大音希声，大象无形，道褒无名。夫唯道，善始且善成。
 
 ### 四十四章
 
 > 名与身孰亲？身与货孰多？得与亡孰病？
 
-> ==***甚爱必大费，多藏必厚亡。故知足不辱，知止不殆，可以长久。***==
+> ==**_甚爱必大费，多藏必厚亡。故知足不辱，知止不殆，可以长久。_**==
 
 过分吝惜反而招致更大的破费，过多的聚财反而会招致严重的损失。因此懂得满足就不会遭到困辱，知道适可而止就不会遇到危险，可以长久平安。

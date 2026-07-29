@@ -65,7 +65,7 @@ ui/book/index.ts
 const props = defineProps({
   class: {
     type: [String, Array, Object],
-    default: '',
+    default: "",
   },
   duration: {
     type: Number,
@@ -73,7 +73,7 @@ const props = defineProps({
   },
   color: {
     type: String,
-    default: 'zinc',
+    default: "zinc",
   },
   isStatic: {
     type: Boolean,
@@ -81,17 +81,17 @@ const props = defineProps({
   },
   size: {
     type: String,
-    default: 'md',
+    default: "md",
   },
   radius: {
     type: String,
-    default: 'md',
+    default: "md",
   },
   shadowSize: {
     type: String,
-    default: 'lg',
+    default: "lg",
   },
-})
+});
 ```
 
 这些参数分别控制：
@@ -111,11 +111,11 @@ const props = defineProps({
 
 ```js
 export const BOOK_SIZE_MAP = {
-  sm: { width: '180px', spineTranslation: '152px' },
-  md: { width: '220px', spineTranslation: '192px' },
-  lg: { width: '260px', spineTranslation: '232px' },
-  xl: { width: '300px', spineTranslation: '272px' },
-}
+  sm: { width: "180px", spineTranslation: "152px" },
+  md: { width: "220px", spineTranslation: "192px" },
+  lg: { width: "260px", spineTranslation: "232px" },
+  xl: { width: "300px", spineTranslation: "272px" },
+};
 ```
 
 `width` 控制书本正面宽度，`spineTranslation` 控制书页侧边的位置。书本要有 3D 厚度，侧边页不能简单贴在左侧，而是需要通过 `translateX(...) rotateY(90deg)` 放到书脊位置。
@@ -124,11 +124,11 @@ export const BOOK_SIZE_MAP = {
 
 ```js
 export const BOOK_SHADOW_SIZE_MAP = {
-  sm: '-5px 0 15px 5px var(--shadowColor)',
-  md: '-7px 0 25px 7px var(--shadowColor)',
-  lg: '-10px 0 35px 10px var(--shadowColor)',
-  xl: '-12px 0 45px 12px var(--shadowColor)',
-}
+  sm: "-5px 0 15px 5px var(--shadowColor)",
+  md: "-7px 0 25px 7px var(--shadowColor)",
+  lg: "-10px 0 35px 10px var(--shadowColor)",
+  xl: "-12px 0 45px 12px var(--shadowColor)",
+};
 ```
 
 这个阴影主要用于书本背面，增强厚度和空间感。
@@ -199,7 +199,7 @@ transform: translateZ(-25px);
 侧边书页旋转到 90 度：
 
 ```js
-transform: `translateX(${computedSize.spineTranslation}) rotateY(90deg)`
+transform: `translateX(${computedSize.spineTranslation}) rotateY(90deg)`;
 ```
 
 这三步组合起来，书本就不再是平面图片，而是一个有正面、背面和侧边厚度的 3D 对象。
@@ -216,9 +216,7 @@ transform: `translateX(${computedSize.spineTranslation}) rotateY(90deg)`
   height: 100%;
   min-width: 8.2%;
   opacity: 0.2;
-  background:
-    linear-gradient(...),
-    linear-gradient(...);
+  background: linear-gradient(...), linear-gradient(...);
 }
 ```
 
@@ -362,12 +360,14 @@ const loadBooks = async () => {
 
 ```js
 const filteredBooks = computed(() => {
-  const keyword = searchKeyword.value.trim().toLocaleLowerCase('zh-CN')
+  const keyword = searchKeyword.value.trim().toLocaleLowerCase("zh-CN");
 
-  if (!keyword) return books.value
+  if (!keyword) return books.value;
 
-  return books.value.filter((book) => book.title.toLocaleLowerCase('zh-CN').includes(keyword))
-})
+  return books.value.filter((book) =>
+    book.title.toLocaleLowerCase("zh-CN").includes(keyword),
+  );
+});
 ```
 
 模板中渲染 `filteredBooks`：
@@ -383,13 +383,13 @@ const filteredBooks = computed(() => {
 在 `client.js` 中注册 `BookShelf`：
 
 ```js
-import BookShelf from './components/pages/BookShelf.vue'
+import BookShelf from "./components/pages/BookShelf.vue";
 
 export default defineClientConfig({
   enhance({ app }) {
-    app.component('BookShelf', BookShelf)
+    app.component("BookShelf", BookShelf);
   },
-})
+});
 ```
 
 这样 Markdown 页面里就可以直接使用：
