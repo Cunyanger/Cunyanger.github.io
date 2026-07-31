@@ -10,6 +10,26 @@
         placeholder="搜索书名..."
         aria-label="搜索书名"
       />
+      <div class="book-shelf__tags" aria-label="按标签筛选书籍">
+        <button
+          type="button"
+          :class="{ active: !selectedTag }"
+          :aria-pressed="!selectedTag"
+          @click="selectedTag = ''"
+        >
+          全部 <span>{{ books.length }}</span>
+        </button>
+        <button
+          v-for="tag in availableTags"
+          :key="tag.name"
+          type="button"
+          :class="{ active: selectedTag === tag.name }"
+          :aria-pressed="selectedTag === tag.name"
+          @click="selectedTag = tag.name"
+        >
+          {{ tag.name }} <span>{{ tag.count }}</span>
+        </button>
+      </div>
     </section>
 
     <section
@@ -36,9 +56,11 @@
             :cover-alt="book.title"
           >
             <BookHeader>
-              <span v-for="tag in book.tags" :key="tag" class="book-badge">{{
-                tag
-              }}</span>
+              <span
+                v-for="tag in book.displayTags"
+                :key="tag"
+                class="book-badge"
+              >{{ tag }}</span>
             </BookHeader>
             <BookTitle>{{ book.title }}</BookTitle>
             <BookDescription>{{ book.author }}</BookDescription>
@@ -123,6 +145,7 @@ import { HaloSearch } from "../ui/halo-search";
 const routes = useRoutes();
 const books = ref([]);
 const searchKeyword = ref("");
+const selectedTag = ref("");
 const currentPage = ref(1);
 const jumpPage = ref(1);
 const pageSize = 6;
@@ -160,6 +183,12 @@ const normalizeAsset = (value) => {
 const toLoadingRoute = (target) =>
   `/loading/?to=${encodeURIComponent(target)}`;
 
+const normalizeTags = (value) => {
+  const tags = Array.isArray(value) ? value : value ? [value] : ["读书"];
+
+  return [...new Set(tags.map((tag) => String(tag).trim()).filter(Boolean))];
+};
+
 const loadBooks = async () => {
   const bookRoutes = Object.entries(routes.value).filter(
     ([link, route]) =>
@@ -170,6 +199,7 @@ const loadBooks = async () => {
       const module = await route.loader();
       const pageData = module._pageData || {};
       const frontmatter = pageData.frontmatter || {};
+      const tags = normalizeTags(frontmatter.tag || frontmatter.tags);
       return {
         link,
         title: pageData.title || route.meta.title,
@@ -182,9 +212,8 @@ const loadBooks = async () => {
         cover: normalizeAsset(frontmatter.bookCover || frontmatter.cover),
         bookColor: frontmatter.bookColor || "zinc",
         readingTime: formatReadingTime(pageData.readingTime),
-        tags: Array.isArray(frontmatter.tag)
-          ? frontmatter.tag.slice(0, 2)
-          : ["读书"],
+        tags,
+        displayTags: tags.slice(0, 2),
       };
     }),
   );
@@ -195,13 +224,29 @@ const loadBooks = async () => {
   );
 };
 
+const availableTags = computed(() => {
+  const counts = new Map();
+
+  books.value.forEach((book) => {
+    book.tags.forEach((tag) => counts.set(tag, (counts.get(tag) || 0) + 1));
+  });
+
+  return [...counts.entries()]
+    .map(([name, count]) => ({ name, count }))
+    .sort(
+      (a, b) =>
+        b.count - a.count || a.name.localeCompare(b.name, "zh-CN"),
+    );
+});
+
 const filteredBooks = computed(() => {
   const keyword = searchKeyword.value.trim().toLocaleLowerCase("zh-CN");
 
-  if (!keyword) return books.value;
-
-  return books.value.filter((book) =>
-    book.title.toLocaleLowerCase("zh-CN").includes(keyword),
+  return books.value.filter(
+    (book) =>
+      (!selectedTag.value || book.tags.includes(selectedTag.value)) &&
+      (!keyword ||
+        book.title.toLocaleLowerCase("zh-CN").includes(keyword)),
   );
 });
 
@@ -215,9 +260,13 @@ const paginatedBooks = computed(() => {
   return filteredBooks.value.slice(start, start + pageSize);
 });
 
-const emptyText = computed(() =>
-  searchKeyword.value.trim() ? "没有匹配的书名。" : "暂无读书笔记。",
-);
+const emptyText = computed(() => {
+  if (searchKeyword.value.trim() || selectedTag.value) {
+    return "没有符合当前筛选条件的书籍。";
+  }
+
+  return "暂无读书笔记。";
+});
 
 const jumpToPage = () => {
   const page = Number(jumpPage.value);
@@ -231,6 +280,14 @@ onMounted(loadBooks);
 watch(routes, loadBooks);
 watch(searchKeyword, () => {
   currentPage.value = 1;
+});
+watch(selectedTag, () => {
+  currentPage.value = 1;
+});
+watch(availableTags, (tags) => {
+  if (selectedTag.value && !tags.some((tag) => tag.name === selectedTag.value)) {
+    selectedTag.value = "";
+  }
 });
 watch(totalPages, (pages) => {
   if (currentPage.value > pages) currentPage.value = pages;
@@ -330,6 +387,51 @@ watch(currentPage, (page) => {
 .book-shelf__search {
   width: min-content;
   margin: 28px auto 0;
+}
+
+.book-shelf__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 920px;
+  margin: 20px auto 0;
+}
+
+.book-shelf__tags button {
+  min-height: 34px;
+  border: 1px solid rgba(125, 211, 252, 0.24);
+  border-radius: 8px;
+  padding: 6px 11px;
+  color: rgba(226, 232, 240, 0.78);
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background: rgba(15, 23, 42, 0.52);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background 160ms ease;
+}
+
+.book-shelf__tags button span {
+  display: inline;
+  margin-left: 4px;
+  color: rgba(148, 163, 184, 0.8);
+  font-size: 0.74rem;
+}
+
+.book-shelf__tags button:hover,
+.book-shelf__tags button:focus-visible,
+.book-shelf__tags button.active {
+  border-color: rgba(94, 234, 212, 0.68);
+  color: #e5f3ff;
+  background: rgba(13, 148, 136, 0.28);
+}
+
+.book-shelf__tags button.active span {
+  color: #99f6e4;
 }
 
 .book-shelf__list {
