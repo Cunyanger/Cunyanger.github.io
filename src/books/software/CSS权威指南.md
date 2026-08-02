@@ -11,8 +11,6 @@ cover:
 tag:
   - CSS
   - 前端
-  - Web标准
-  - 样式表
 isOriginal: true
 excerpt: 一本以"实现方式 + 规范精读"双视角系统讲解 CSS 的权威参考：从选择符、层叠、盒模型，到 Flexbox、Grid、变形与动画，覆盖从 HTML 文档到最终渲染呈现的完整样式链路。
 ---

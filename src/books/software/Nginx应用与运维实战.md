@@ -9,9 +9,10 @@ category: 软件开发
 bookCover: https://ts3.tc.mm.bing.net/th/id/OIP-C.aWrGLDAC7oVaoBPcyV62vQHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3
 cover:
 tag:
-  - Nginx
-  - 反向代理
+  - NGINX
   - 负载均衡
+  - 反向代理
+  - Web服务器
 isOriginal: true
 excerpt: 以"整体理解 → 分章节解读 → 按请求/运维生命周期归纳技术点 → 环境搭建 → 技术扩展"的路径，深度精读王小东《Nginx应用与运维实战》，覆盖编译部署、核心配置、Web/代理/缓存/负载均衡四大应用、日志监控集群运维，以及 Kubernetes Ingress 与微服务网关 Kong 的云原生集成。
 ---

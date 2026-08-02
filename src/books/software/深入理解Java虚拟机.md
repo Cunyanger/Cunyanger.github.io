@@ -8,10 +8,7 @@ bookCover: https://cdn.weread.qq.com/weread/cover/38/yuewen_27371406/t6_yuewen_2
 bookAuthor: 周志明
 tag:
   - JVM
-  - 垃圾收集
-  - 类加载
-  - 性能调优
-  - 并发编程
+  - JAVA
 isOriginal: true
 excerpt: 以"整体理解 → 分章节解读 → 按JVM生命周期归纳技术点 → 环境搭建 → 技术扩展"的路径，深度精读周志明《深入理解Java虚拟机（第3版）》，覆盖内存管理、垃圾收集、类加载、字节码执行、编译优化与高效并发六大主线。
 ---
