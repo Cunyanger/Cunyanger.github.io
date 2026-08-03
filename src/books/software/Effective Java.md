@@ -17,11 +17,9 @@ isOriginal: true
 excerpt: 以 Joshua Bloch《Effective Java》第3版的90个Item为证据主线，从API设计、对象生命周期、类型建模、函数式处理、异常、并发到序列化边界，系统解释每条建议解决的问题、适用条件、局限及其在JDK 21中的延续与变化。
 ---
 
-# 《Effective Java（第 3 版）》深度阅读
+# 《Effective Java（第 3 版）》
 
 > **书目信息**：Joshua Bloch, _Effective Java, Third Edition_, Addison-Wesley Professional, 2018，ISBN `978-0-13-468599-1`。
->
-> **文本边界**：本文逐条核对指定 PDF `Effective-Java-3rd-LaTex-Pattern.pdf`。该文件标注生成于 2018-02-27，是 `sjsdfg & jianshu` 整理的中文社区译校版，不是出版社正式中文版；其正文覆盖全部 90 个 Item。为避免把译文问题当作作者原意，关键术语同时保留英文，短引文按该 PDF 转录并在必要处校正明显错字。
 >
 > **时效边界**：第三版以 Java 7、8、9 为主要时代背景。下文用 `【原书】` 标出书中结论，用 `【书后演进】` 标出 JDK 10 至 JDK 21 的补充；后者不是作者在第三版中的原话。
 
@@ -276,7 +274,9 @@ public static Boolean valueOf(boolean b) {
 
 它相对构造器有五项主要优势：有名字；不必每次创建新对象；可返回声明类型的子类型；返回类型可由参数决定；方法存在时返回类甚至可以尚未加载。主要代价是：若不提供可访问构造器，类不能被常规继承；静态工厂在 API 文档中不如构造器醒目。
 
-当可选参数较多时，Item 2 比较了伸缩构造器、JavaBeans 和 Builder。下面保留书中 `NutritionFacts` 示例的核心结构：
+当可选参数较多时，Item 2 比较了伸缩构造器、JavaBeans 和 Builder。
+
+书中 `NutritionFacts` 示例的核心结构：
 
 ```java
 public class NutritionFacts {
