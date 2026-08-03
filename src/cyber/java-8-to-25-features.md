@@ -93,7 +93,7 @@ return orders.thenApply(this::summarize);
 - `PermGen` 移除，类元数据进入本地内存中的 Metaspace；`-XX:MaxMetaspaceSize` 可限制上限。
 - G1（Garbage-First）成为可选收集器，适合大堆和可预测暂停；并行 GC 仍常用于吞吐优先场景。
 
-## Java 9 - 模块化解决大型应用的依赖边界问题（非 LTS）
+## Java 9 - 模块化解决大型应用的依赖边界问题
 
 Java 9（2017）的核心是 JPMS（Java Platform Module System，Java 平台模块系统，JEP 261）。它把包、依赖和导出关系写入模块描述符，解决类路径（classpath）下的隐式依赖、冲突和强封装缺失。
 
@@ -149,7 +149,7 @@ jshell> ports
 
 G1 在 JDK 9 成为默认垃圾收集器；紧凑字符串（Compact Strings）用 Latin-1 字节数组存储可表示为单字节的字符串，降低英文文本的内存占用。统一日志（Unified JVM Logging）用 `-Xlog:gc*,safepoint` 取代多个旧日志开关。
 
-## Java 10 - 用局部变量类型推断减少样板代码（非 LTS）
+## Java 10 - 用局部变量类型推断减少样板代码
 
 Java 10（2018）带来 `var`（JEP 286）和一批运行时优化。`var` 是编译期的局部变量类型推断，不是动态类型，也不能用于字段、方法参数或返回值。
 
@@ -199,7 +199,7 @@ Files.writeString(path, text, StandardCharsets.UTF_8);
 
 Lambda 参数可以使用 `var`，并能配合注解：`(@Nonnull var value) -> value.trim()`，但一组参数必须全部使用 `var`。
 
-## JVM、诊断和部署
+### JVM、诊断和部署
 
 - JFR（Java Flight Recorder）开源。可用 `jcmd <pid> JFR.start` 启动录制，再用 `jfr print recording.jfr` 查看低开销生产诊断数据。
 - ZGC（Z Garbage Collector）和 Epsilon GC（不回收垃圾、用于性能基线/短生命周期任务）为实验性收集器。
@@ -207,7 +207,7 @@ Lambda 参数可以使用 `var`，并能配合注解：`(@Nonnull var value) -> 
 - Nest-based access 消除嵌套类访问合成桥接方法，减少反射和字节码开销。
 - Java EE/CORBA 模块移除；Nashorn 弃用。升级旧项目时需显式加入 JAXB、Activation 等外部依赖。
 
-## Java 12 - 让 switch 成为表达式，并持续降低 GC 停顿（非 LTS）
+## Java 12 - 让 switch 成为表达式，并持续降低 GC 停顿
 
 Java 12（2019）首次预览 switch 表达式，并加入 `Collectors.teeing`、紧凑数字格式和 G1 可中止混合回收。
 
@@ -226,7 +226,7 @@ int days = switch (month) {
 
 `Collectors.teeing(a, b, merger)` 将同一流同时交给两个下游收集器再合并，例如一次遍历计算平均值和总数。
 
-## Java 13 - 文本块和动态 CDS 简化多行文本与启动优化（非 LTS）
+## Java 13 - 文本块和动态 CDS 简化多行文本与启动优化
 
 Java 13（2019）第二次预览 switch 表达式，首次预览文本块（Text Block），并改进类数据共享。
 
@@ -243,7 +243,7 @@ String json = """
 
 动态 CDS（Class Data Sharing）可在应用运行后生成归档，使后续启动更快、共享内存更多；ZGC 支持归还未使用堆内存，长时间运行且负载波动的服务受益明显。
 
-## Java 14 - Records、模式匹配和有帮助的空指针信息落地（非 LTS）
+## Java 14 - Records、模式匹配和有帮助的空指针信息落地
 
 Java 14（2020）将 switch 表达式正式化，并预览 Records、`instanceof` 模式匹配；`jpackage`、Helpful NPE 和 JFR Event Streaming 也进入 JDK。
 
@@ -273,7 +273,7 @@ Helpful NPE 会指出具体哪一段表达式为空，例如 `user.getProfile().
 
 `jpackage` 可把模块或类路径应用打包成 Windows MSI、macOS DMG、Linux DEB/RPM；需要目标平台的打包工具链。
 
-## Java 15 - 文本块正式化，隐藏类和新一代 GC 可用于生产（非 LTS）
+## Java 15 - 文本块正式化，隐藏类和新一代 GC 可用于生产
 
 Java 15（2020）正式发布文本块；隐藏类（Hidden Classes）为框架生成不可发现、不可命名的运行时类；Sealed Classes（密封类）和 Records 继续预览。
 
@@ -287,7 +287,7 @@ public final class Rectangle implements Shape {}
 
 ZGC 和 Shenandoah 在本版转为生产可用（Production），目标是低暂停；Epsilon 仍用于基准。EdDSA（Edwards-curve Digital Signature Algorithm，爱德华曲线数字签名算法）提供现代签名能力。
 
-## Java 16 - Record 与 instanceof 模式匹配正式发布（非 LTS）
+## Java 16 - Record 与 instanceof 模式匹配正式发布
 
 Java 16（2021）正式发布 Records 和 `instanceof` 模式匹配，Unix-domain socket、弹性 Metaspace、Vector API（孵化）和 Foreign Linker/Memory API（孵化）加入。
 
@@ -333,7 +333,7 @@ static String describe(Shape shape) {
 - Security Manager 弃用；RMI Activation、Applet API 等历史组件移除或弃用。
 - Foreign Function & Memory API、Vector API 继续孵化；分代 ZGC 仍未成为默认。
 
-## Java 18 - UTF-8 默认、轻量 Web Server 与开发体验改进（非 LTS）
+## Java 18 - UTF-8 默认、轻量 Web Server 与开发体验改进
 
 Java 18（2022）规定 UTF-8 为默认字符集，减少不同操作系统上的乱码；提供简单 Web Server、Javadoc 代码片段和核心反射重写。
 
@@ -347,7 +347,7 @@ jwebserver --port 8000 --directory public
 
 `{@snippet lang="java" : ...}` 可在 Javadoc 中引用并校验外部代码片段。Finalization（终结器）被弃用，建议使用 try-with-resources、`AutoCloseable` 和 `Cleaner`（仅作兜底）管理资源。Vector API、Foreign Function & Memory API 继续预览/孵化。
 
-## Java 19 - 虚拟线程和结构化并发首次登场（非 LTS）
+## Java 19 - 虚拟线程和结构化并发首次登场
 
 Java 19（2022）第一次预览 Virtual Threads（虚拟线程），并孵化 Structured Concurrency（结构化并发）、Scoped Values（作用域值）和 Record Patterns。
 
@@ -366,7 +366,7 @@ try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
 结构化并发把一组子任务绑定到词法作用域，统一取消、失败传播和生命周期，减少“泄漏”的后台任务。Scoped Values 用不可变、继承的上下文值替代部分 `ThreadLocal`，适合请求 ID、租户和安全主体传播。
 
-## Java 20 - 并发上下文与模式解构继续演进（非 LTS）
+## Java 20 - 并发上下文与模式解构继续演进
 
 Java 20（2023）是多个预览特性的第二次或第四次迭代：Record Patterns、Pattern Matching for switch、Virtual Threads、Structured Concurrency、Scoped Values 和 Foreign Function & Memory API。
 
@@ -398,11 +398,11 @@ try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
 连接池、数据库连接和下游限流仍要有界；虚拟线程降低线程内存和上下文切换成本，不会增加下游容量。Java 21 还通过 JFR/JDK 工具帮助定位 pinning。
 
-## Sequenced Collections
+### Sequenced Collections
 
 `SequencedCollection`、`SequencedSet`、`SequencedMap` 统一了有序集合的首尾操作：`getFirst()`、`getLast()`、`addFirst()`、`reversed()`。库代码可面向接口编程，避免为 `Deque`、`List`、`LinkedHashMap` 编写重复适配。
 
-## 模式 switch 与 Record Pattern
+### 模式 switch 与 Record Pattern
 
 ```java
 static double area(Shape s) {
@@ -415,7 +415,7 @@ static double area(Shape s) {
 
 `when` 守卫可写成 `case Circle c when c.radius() > 0 -> ...`。编译器根据密封层次检查穷尽性，`null` 也可单独写 `case null`。
 
-## Foreign Function & Memory API（第三次预览）
+### Foreign Function & Memory API（第三次预览）
 
 FFM（Foreign Function & Memory，外部函数与内存）使用 `Arena` 管理生命周期、`MemorySegment` 表示内存、`Linker` 调用本地函数。相比 JNI（Java Native Interface，Java 原生接口），它减少手写胶水代码并提供边界检查；该 API 在 Java 22 才正式发布。
 
@@ -430,7 +430,7 @@ try (Arena arena = Arena.ofConfined()) {
 
 其他变化：分代 ZGC（Generational ZGC）降低短命对象扫描成本；KEM（Key Encapsulation Mechanism，密钥封装机制）API 为后量子密码集成提供统一接口；字符串模板、结构化并发等仍是预览。
 
-## Java 22 - FFM 正式化并改善构造器、集合流和启动方式（非 LTS）
+## Java 22 - FFM 正式化并改善构造器、集合流和启动方式
 
 Java 22（2024）将 FFM 正式化，Unnamed Variables & Patterns 正式发布，并预览 Flexible Constructor Bodies、Stream Gatherers、Class-File API、String Templates 后续方案和多文件源码启动。
 
@@ -454,7 +454,7 @@ Flexible Constructor Bodies（灵活构造器体，预览）允许在 `super()`/
 
 G1 增加 region pinning（区域固定）支持，JNI 临界区不必频繁触发全堆停顿；Linux/RISC-V 端口加入主线。`java --source 22 Main.java` 可启动由多个源码文件组成的简单程序。
 
-## Java 23 - 模块导入、原始类型模式与低延迟 GC 默认策略（非 LTS）
+## Java 23 - 模块导入、原始类型模式与低延迟 GC 默认策略
 
 Java 23（2024）预览 Module Import Declarations、Primitive Types in Patterns、Flexible Constructor Bodies、Stream Gatherers、Class-File API、Scoped Values、Structured Concurrency 和 Unnamed Classes/Instance Main Methods。Java 21/22 的 String Templates 没有在本版继续，不能把该预览语法作为可迁移的正式 API。
 
@@ -468,7 +468,7 @@ if (value instanceof int i && i > 0) { // 原始类型模式（预览）
 
 ZGC 的分代模式成为默认策略（仍可用 `-XX:-ZGenerational` 关闭），短命对象多的服务通常拥有更低 GC 工作量和更好的吞吐。JEP 467 支持 Markdown 风格 Javadoc 注释，文档源码更易读；Vector API 继续孵化。
 
-## Java 24 - AOT、紧凑对象头和结构化并发继续逼近稳定（非 LTS）
+## Java 24 - AOT、紧凑对象头和结构化并发继续逼近稳定
 
 Java 24（2025）把 Class-File API 和 Stream Gatherers 正式化，加入 AOT（Ahead-Of-Time，提前）类加载/链接、Compact Object Headers（紧凑对象头，实验性）、虚拟线程去 pinning、量子抗性密码算法，并继续预览构造器体、模块导入、简单源文件、原始类型模式、作用域值和结构化并发。非分代 ZGC 被移除，Security Manager 被永久禁用，依赖这些旧行为的系统必须先迁移。
 
