@@ -7,11 +7,9 @@ category:
   - 读书
 cover: https://ts4.tc.mm.bing.net/th/id/OIP-C.p4vtKQ5m0iQrpKZmr1BVTAHaJT?r=0&rs=1&pid=ImgDetMain&o=7&rm=3
 tag:
-  - Clean Code
   - 代码质量
   - 重构
   - 软件工程
-  - Java
 isOriginal: true
 excerpt: 用半小时快速读完《代码整洁之道》的核心思想：命名、函数、注释、格式、对象、错误处理、测试、类设计、系统边界和持续重构。
 ---

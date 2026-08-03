@@ -597,6 +597,11 @@ onBeforeUnmount(() => {
   -webkit-backdrop-filter: blur(26px) saturate(1.24);
 }
 
+.custom-home :deep(.three-d-card:hover),
+.custom-home :deep(.three-d-card:focus-visible) {
+  text-decoration: none !important;
+}
+
 .custom-home :deep(.three-d-card strong) {
   color: #0f172a;
 }

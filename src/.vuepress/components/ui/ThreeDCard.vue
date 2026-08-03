@@ -91,6 +91,11 @@ const handlePointerLeave = (event) => {
   outline: none;
 }
 
+.three-d-card:hover,
+.three-d-card:focus-visible {
+  text-decoration: none;
+}
+
 .three-d-card__body {
   --card-glow-x: 50%;
   --card-glow-y: 0%;
