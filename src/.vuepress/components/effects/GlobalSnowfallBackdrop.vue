@@ -3,7 +3,8 @@
     <SnowfallBg
       class="global-snowfall-backdrop__canvas"
       color="#ffffff"
-      :quantity="130"
+      :quantity="70"
+      :fps="18"
       :speed="0.78"
       :min-radius="0.7"
       :max-radius="2.8"

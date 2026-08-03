@@ -1408,6 +1408,17 @@ button:disabled,
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+}
+
 @media (min-width: 960px) and (max-width: 1199px) {
   .website-nav-page .vp-card-container {
     grid-template-columns: repeat(3, minmax(0, 1fr));

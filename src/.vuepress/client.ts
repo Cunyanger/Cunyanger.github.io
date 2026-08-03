@@ -6,7 +6,6 @@ import GlobalScrollProgress from './components/effects/GlobalScrollProgress.vue'
 import LoadingRouteInterceptor from './components/effects/LoadingRouteInterceptor.vue'
 import PageParticleBackdrop from './components/effects/PageParticleBackdrop.vue'
 import RoutePageClasses from './components/effects/RoutePageClasses.vue'
-import SleekLineCursor from './components/effects/SleekLineCursor.vue'
 import ArticleLoadingPage from './components/pages/ArticleLoadingPage.vue'
 import BookShelf from './components/pages/BookShelf.vue'
 import HomeExperience from './components/pages/HomeExperience.vue'
@@ -18,7 +17,6 @@ export default defineClientConfig({
     app.component('HomeExperience', HomeExperience)
   },
   rootComponents: [
-    SleekLineCursor,
     PageParticleBackdrop,
     GlobalParticleBackdrop,
     GlobalSnowfallBackdrop,

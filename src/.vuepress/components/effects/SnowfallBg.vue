@@ -11,6 +11,10 @@ const props = defineProps({
     type: Number,
     default: 100,
   },
+  fps: {
+    type: Number,
+    default: 24,
+  },
   speed: {
     type: Number,
     default: 1,
@@ -36,6 +40,8 @@ const snowflakes = ref([]);
 const canvasSize = reactive({ w: 0, h: 0 });
 const { pixelRatio } = useDevicePixelRatio();
 let animationId = 0;
+let lastFrameTime = 0;
+let isVisible = true;
 
 const color = computed(() => {
   const hex = props.color.replace(/^#/, "").padStart(6, "0");
@@ -50,17 +56,44 @@ onMounted(() => {
   if (canvasRef.value) {
     context.value = canvasRef.value.getContext("2d");
   }
+  isVisible = document.visibilityState === "visible";
   initCanvas();
-  animate();
+  startAnimation();
   window.addEventListener("resize", initCanvas);
+  document.addEventListener("visibilitychange", syncVisibility);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("resize", initCanvas);
+  document.removeEventListener("visibilitychange", syncVisibility);
   if (animationId) {
     cancelAnimationFrame(animationId);
   }
 });
+
+function startAnimation() {
+  if (animationId || !isVisible) return;
+
+  animationId = requestAnimationFrame(animate);
+}
+
+function stopAnimation() {
+  if (!animationId) return;
+
+  cancelAnimationFrame(animationId);
+  animationId = 0;
+  lastFrameTime = 0;
+}
+
+function syncVisibility() {
+  isVisible = document.visibilityState === "visible";
+
+  if (isVisible) {
+    startAnimation();
+  } else {
+    stopAnimation();
+  }
+}
 
 function initCanvas() {
   resizeCanvas();
@@ -72,11 +105,13 @@ function resizeCanvas() {
     snowflakes.value.length = 0;
     canvasSize.w = canvasContainerRef.value.offsetWidth;
     canvasSize.h = canvasContainerRef.value.offsetHeight;
-    canvasRef.value.width = canvasSize.w * pixelRatio.value;
-    canvasRef.value.height = canvasSize.h * pixelRatio.value;
+    const dpr = Math.min(pixelRatio.value || 1, 1.5);
+
+    canvasRef.value.width = canvasSize.w * dpr;
+    canvasRef.value.height = canvasSize.h * dpr;
     canvasRef.value.style.width = `${canvasSize.w}px`;
     canvasRef.value.style.height = `${canvasSize.h}px`;
-    context.value.setTransform(pixelRatio.value, 0, 0, pixelRatio.value, 0, 0);
+    context.value.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 }
 
@@ -108,7 +143,16 @@ function drawSnowflake(snowflake) {
   context.value.fill();
 }
 
-function animate() {
+function animate(timestamp) {
+  const frameInterval = 1000 / Math.max(1, Math.min(props.fps, 60));
+
+  if (timestamp - lastFrameTime < frameInterval) {
+    animationId = requestAnimationFrame(animate);
+    return;
+  }
+
+  lastFrameTime = timestamp;
+
   if (context.value) {
     context.value.clearRect(0, 0, canvasSize.w, canvasSize.h);
   }

@@ -73,12 +73,295 @@ product_account
 - 查询祖先链麻烦。
 - 移动节点影响范围大。
 
-替代方案：
+先用一个统一例子理解：电商后台有商品分类，层级大致如下。
 
-- 邻接表：简单，适合层级浅、操作简单。
-- 路径枚举：存路径，查询子树方便。
-- 嵌套集：读子树快，写入移动复杂。
-- 闭包表：用表保存祖先后代关系，查询灵活。
+```text
+电子产品
+  手机
+    Android
+    iPhone
+  电脑
+    笔记本
+    台式机
+```
+
+如果业务只需要展示“当前分类的直接下级”，朴素的 `parent_id` 很好；如果业务经常要查“手机下面所有子分类的商品”“某分类从根到当前的面包屑”“移动一棵子树”，不同建模方式的成本差异会非常明显。
+
+#### 方案一：邻接表
+
+邻接表就是每行只记录自己的直接父节点。
+
+```sql
+CREATE TABLE category (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  parent_id BIGINT NULL,
+  FOREIGN KEY (parent_id) REFERENCES category(id)
+);
+```
+
+示例数据：
+
+| id | name | parent_id |
+| --- | --- | --- |
+| 1 | 电子产品 | NULL |
+| 2 | 手机 | 1 |
+| 3 | Android | 2 |
+| 4 | iPhone | 2 |
+| 5 | 电脑 | 1 |
+
+查询“手机”的直接子分类很简单：
+
+```sql
+SELECT *
+FROM category
+WHERE parent_id = 2;
+```
+
+查询“Android”的父分类也很简单：
+
+```sql
+SELECT parent.*
+FROM category AS child
+JOIN category AS parent ON parent.id = child.parent_id
+WHERE child.id = 3;
+```
+
+但查询整棵子树需要递归查询。支持递归 CTE 的数据库可以这样写：
+
+```sql
+WITH RECURSIVE subtree AS (
+  SELECT id, name, parent_id, 0 AS depth
+  FROM category
+  WHERE id = 2
+
+  UNION ALL
+
+  SELECT child.id, child.name, child.parent_id, subtree.depth + 1
+  FROM category AS child
+  JOIN subtree ON child.parent_id = subtree.id
+)
+SELECT *
+FROM subtree
+ORDER BY depth, id;
+```
+
+邻接表适合：
+
+- 树层级浅，例如两三级菜单、组织部门。
+- 主要操作是查直接父子节点。
+- 数据会频繁新增、移动、删除。
+- 数据库支持递归查询，或者应用层可以接受递归加载。
+
+不适合：
+
+- 每次页面都要查整棵大树。
+- 经常统计某节点下所有后代。
+- 数据库不支持递归 CTE，且不想在应用层循环查询。
+
+#### 方案二：路径枚举
+
+路径枚举是在每个节点上保存从根到当前节点的路径。
+
+```sql
+CREATE TABLE category (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  path VARCHAR(500) NOT NULL UNIQUE
+);
+```
+
+示例数据：
+
+| id | name | path |
+| --- | --- | --- |
+| 1 | 电子产品 | /1/ |
+| 2 | 手机 | /1/2/ |
+| 3 | Android | /1/2/3/ |
+| 4 | iPhone | /1/2/4/ |
+| 5 | 电脑 | /1/5/ |
+
+查询“手机”的整棵子树：
+
+```sql
+SELECT *
+FROM category
+WHERE path LIKE '/1/2/%'
+ORDER BY path;
+```
+
+查询“Android”的祖先链，可以先拿到 `path = '/1/2/3/'`，再按路径中的 ID 查询：
+
+```sql
+SELECT *
+FROM category
+WHERE id IN (1, 2, 3)
+ORDER BY LENGTH(path);
+```
+
+实际项目里不要把 `path` 写成 `/1/12/123` 这种没有尾部分隔符的形式，否则 `LIKE '/1/2%'` 可能误匹配 `/1/20/`。常见写法是 `/1/2/3/`，或使用固定宽度编码，比如 `/000001/000002/000003/`。
+
+路径枚举适合：
+
+- 读多写少。
+- 经常查询某节点下所有后代。
+- 需要按层级顺序展示目录。
+- 分类、权限菜单、内容栏目这类树整体不太频繁移动。
+
+不适合：
+
+- 经常移动大子树。移动 `/1/2/` 到 `/1/5/2/` 时，所有后代的 `path` 都要更新。
+- 路径过长。层级很深时会遇到字段长度、索引长度和查询性能问题。
+- 需要严格外键表达路径中每个祖先关系。`path` 本质是编码字符串，数据库很难对每段 ID 都建外键。
+
+#### 方案三：嵌套集
+
+嵌套集给每个节点维护左右边界，子节点的边界总是落在父节点边界内。
+
+```sql
+CREATE TABLE category (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  lft INT NOT NULL,
+  rgt INT NOT NULL,
+  UNIQUE (lft),
+  UNIQUE (rgt)
+);
+```
+
+示例数据：
+
+| id | name | lft | rgt |
+| --- | --- | --- | --- |
+| 1 | 电子产品 | 1 | 12 |
+| 2 | 手机 | 2 | 7 |
+| 3 | Android | 3 | 4 |
+| 4 | iPhone | 5 | 6 |
+| 5 | 电脑 | 8 | 11 |
+| 6 | 笔记本 | 9 | 10 |
+
+查询“手机”的整棵子树：
+
+```sql
+SELECT child.*
+FROM category AS parent
+JOIN category AS child
+  ON child.lft BETWEEN parent.lft AND parent.rgt
+WHERE parent.id = 2
+ORDER BY child.lft;
+```
+
+查询“Android”的祖先链：
+
+```sql
+SELECT parent.*
+FROM category AS child
+JOIN category AS parent
+  ON child.lft BETWEEN parent.lft AND parent.rgt
+WHERE child.id = 3
+ORDER BY parent.lft;
+```
+
+嵌套集适合：
+
+- 树结构基本稳定。
+- 子树读取非常频繁。
+- 需要一次查询拿到完整层级顺序。
+
+不适合：
+
+- 频繁插入、删除、移动节点。因为很多节点的 `lft`、`rgt` 都要重算。
+- 并发写入多的场景。边界更新范围大，容易产生锁竞争。
+
+#### 方案四：闭包表
+
+闭包表把“祖先和后代”的关系单独存成一张表，并记录距离。
+
+```sql
+CREATE TABLE category (
+  id BIGINT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE category_closure (
+  ancestor_id BIGINT NOT NULL,
+  descendant_id BIGINT NOT NULL,
+  depth INT NOT NULL,
+  PRIMARY KEY (ancestor_id, descendant_id),
+  FOREIGN KEY (ancestor_id) REFERENCES category(id),
+  FOREIGN KEY (descendant_id) REFERENCES category(id)
+);
+```
+
+每个节点要保存一条指向自己的记录，`depth = 0`。例如“手机”的关系会包含：
+
+| ancestor_id | descendant_id | depth | 含义 |
+| --- | --- | --- | --- |
+| 2 | 2 | 0 | 手机自己 |
+| 2 | 3 | 1 | 手机 -> Android |
+| 2 | 4 | 1 | 手机 -> iPhone |
+| 1 | 3 | 2 | 电子产品 -> Android |
+
+查询“手机”的所有后代：
+
+```sql
+SELECT child.*
+FROM category_closure AS tree
+JOIN category AS child ON child.id = tree.descendant_id
+WHERE tree.ancestor_id = 2
+ORDER BY tree.depth, child.id;
+```
+
+查询“Android”的祖先链：
+
+```sql
+SELECT parent.*
+FROM category_closure AS tree
+JOIN category AS parent ON parent.id = tree.ancestor_id
+WHERE tree.descendant_id = 3
+ORDER BY tree.depth DESC;
+```
+
+新增“iPad”作为“电子产品”的子节点时，需要插入它自己到自己的关系，以及所有“电子产品”的祖先到它的关系：
+
+```sql
+INSERT INTO category (id, name) VALUES (7, 'iPad');
+
+INSERT INTO category_closure (ancestor_id, descendant_id, depth)
+SELECT ancestor_id, 7, depth + 1
+FROM category_closure
+WHERE descendant_id = 1
+UNION ALL
+SELECT 7, 7, 0;
+```
+
+闭包表适合：
+
+- 经常查祖先链和后代树。
+- 层级深、查询灵活。
+- 希望关系能用外键保证。
+- 能接受额外存储空间和写入维护成本。
+
+不适合：
+
+- 超大规模、频繁移动的树。移动子树时需要删除旧关系、插入新关系，变更量可能很大。
+- 团队不熟悉该模型，容易写错维护 SQL。
+
+#### 如何选择
+
+| 方法 | 子树查询 | 祖先查询 | 插入节点 | 移动子树 | 典型场景 |
+| --- | --- | --- | --- | --- | --- |
+| 邻接表 | 依赖递归 | 依赖递归 | 简单 | 简单 | 部门、菜单、小型分类 |
+| 路径枚举 | 简单，`LIKE 'path/%'` | 需要解析路径 | 简单 | 要批量更新路径 | 内容栏目、读多写少分类 |
+| 嵌套集 | 很快 | 很快 | 较复杂 | 很复杂 | 结构稳定的目录树 |
+| 闭包表 | 很快 | 很快 | 中等 | 较复杂 | 权限、组织、深层分类 |
+
+工程经验上，不要一看到树就上复杂模型：
+
+- 后台菜单只有两三级，用邻接表通常足够。
+- 分类页经常按栏目展示全部子孙节点，可以优先考虑路径枚举或闭包表。
+- 树几乎不变、读性能要求高，可以考虑嵌套集。
+- 权限、组织架构这类既要查上级又要查下级，闭包表更稳。
 
 核心：树结构没有唯一最佳方案，要按读写场景选择。
 

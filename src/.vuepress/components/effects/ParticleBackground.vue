@@ -10,6 +10,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  fps: {
+    type: Number,
+    default: 24,
+  },
 })
 
 const canvasRef = ref(null)
@@ -26,16 +30,33 @@ onMounted(() => {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const pointer = { active: false, x: 0, y: 0 }
   const particles = []
+  const frameInterval = 1000 / Math.max(1, Math.min(props.fps, 60))
+  let lastFrameTime = 0
+  let isVisible = document.visibilityState === 'visible'
+
+  const scheduleDraw = () => {
+    if (prefersReducedMotion || !isVisible || animationFrame) return
+
+    animationFrame = window.requestAnimationFrame(draw)
+  }
+
+  const stopDrawing = () => {
+    if (!animationFrame) return
+
+    window.cancelAnimationFrame(animationFrame)
+    animationFrame = 0
+    lastFrameTime = 0
+  }
 
   const resize = () => {
     const rect = canvas.getBoundingClientRect()
-    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
 
     canvas.width = Math.floor(rect.width * dpr)
     canvas.height = Math.floor(rect.height * dpr)
     context.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-    const count = rect.width < 720 ? 48 : 92
+    const count = rect.width < 720 ? 28 : 56
     particles.length = 0
 
     for (let index = 0; index < count; index += 1) {
@@ -50,9 +71,25 @@ onMounted(() => {
     }
   }
 
-  const draw = () => {
+  const draw = (timestamp = 0) => {
+    animationFrame = 0
+
+    if (!isVisible) return
+
+    if (timestamp && timestamp - lastFrameTime < frameInterval) {
+      scheduleDraw()
+      return
+    }
+
+    lastFrameTime = timestamp || performance.now()
+
     const width = canvas.clientWidth
     const height = canvas.clientHeight
+
+    if (!width || !height) {
+      scheduleDraw()
+      return
+    }
 
     context.clearRect(0, 0, width, height)
 
@@ -93,9 +130,12 @@ onMounted(() => {
       for (let j = i + 1; j < particles.length; j += 1) {
         const first = particles[i]
         const second = particles[j]
-        const distance = Math.hypot(first.x - second.x, first.y - second.y)
+        const dx = first.x - second.x
+        const dy = first.y - second.y
+        const distanceSquared = dx * dx + dy * dy
 
-        if (distance < 124) {
+        if (distanceSquared < 15376) {
+          const distance = Math.sqrt(distanceSquared)
           context.beginPath()
           context.moveTo(first.x, first.y)
           context.lineTo(second.x, second.y)
@@ -106,7 +146,7 @@ onMounted(() => {
       }
     }
 
-    if (!prefersReducedMotion) animationFrame = window.requestAnimationFrame(draw)
+    scheduleDraw()
   }
 
   const updatePointer = (event) => {
@@ -121,18 +161,29 @@ onMounted(() => {
     pointer.active = false
   }
 
+  const syncVisibility = () => {
+    isVisible = document.visibilityState === 'visible'
+    if (isVisible) {
+      scheduleDraw()
+    } else {
+      stopDrawing()
+    }
+  }
+
   resize()
   draw()
 
   const pointerTarget = props.trackWindow ? window : canvas
 
   window.addEventListener('resize', resize)
+  document.addEventListener('visibilitychange', syncVisibility)
   pointerTarget.addEventListener('pointermove', updatePointer)
   pointerTarget.addEventListener('pointerleave', leavePointer)
 
   cleanup = () => {
-    window.cancelAnimationFrame(animationFrame)
+    stopDrawing()
     window.removeEventListener('resize', resize)
+    document.removeEventListener('visibilitychange', syncVisibility)
     pointerTarget.removeEventListener('pointermove', updatePointer)
     pointerTarget.removeEventListener('pointerleave', leavePointer)
   }

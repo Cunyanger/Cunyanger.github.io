@@ -5,18 +5,23 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 import ParticleBackground from "./ParticleBackground.vue";
 
+const route = useRoute();
 const enabled = ref(false);
 const currentTheme = ref("light");
+const isArticleIndex = computed(() => route.path.startsWith("/article/"));
 
 let mediaQuery = null;
 let themeObserver = null;
+let stopWatchingRoute = () => {};
 
 const syncVisible = () => {
-  enabled.value = !mediaQuery?.matches && currentTheme.value !== "dark";
+  enabled.value =
+    isArticleIndex.value && !mediaQuery?.matches && currentTheme.value !== "dark";
 };
 
 const syncTheme = () => {
@@ -28,6 +33,7 @@ const syncTheme = () => {
 onMounted(() => {
   mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   syncTheme();
+  stopWatchingRoute = watch(isArticleIndex, syncVisible);
   mediaQuery.addEventListener("change", syncVisible);
   themeObserver = new MutationObserver(syncTheme);
   themeObserver.observe(document.documentElement, {
@@ -37,6 +43,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  stopWatchingRoute();
   mediaQuery?.removeEventListener("change", syncVisible);
   themeObserver?.disconnect();
 });

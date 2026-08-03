@@ -35,6 +35,193 @@ Java 如何用对象、类型、接口、泛型、集合、函数式和并发工
 3. 重点读集合、函数式、Stream、异常、泛型。
 4. 最后读类型信息、注解和并发。
 
+## 全书知识地图
+
+《On Java 8》可以按六条主线阅读，而不是机械按章节背 API。
+
+| 主线 | 对应章节 | 要解决的问题 | 读完应形成的能力 |
+| --- | --- | --- | --- |
+| 语言基础 | 对象、操作符、控制流、初始化、清理 | Java 程序如何被表达和执行 | 能写出状态明确、流程清晰、资源可关闭的基础代码 |
+| 面向对象 | 封装、复用、多态、接口、内部类 | 如何用抽象管理变化 | 能用组合、接口和多态降低耦合 |
+| 数据结构与数据处理 | 集合、数组、字符串、枚举、Stream | 如何组织、转换和查询数据 | 能按语义选择集合，并写出清晰的数据流水线 |
+| 类型系统 | 泛型、类型信息、反射 | 编译期类型和运行时类型如何配合 | 能设计类型安全 API，理解框架为什么能自动装配 |
+| 声明式编程 | Lambda、方法引用、函数式接口、注解 | 如何把行为和元数据声明出来 | 能把变化逻辑参数化，理解注解驱动框架的边界 |
+| 工程可靠性 | 异常、测试、文件、并发 | 程序如何面对失败、资源和并发 | 能写出可测试、可恢复、资源安全、并发正确的代码 |
+
+阅读时可以反复问四个问题：
+
+1. 这一章解决的是表达问题、抽象问题、数据问题，还是工程可靠性问题？
+2. 它降低了哪类复杂度：状态复杂度、依赖复杂度、流程复杂度，还是并发复杂度？
+3. 它的典型误用是什么？
+4. 在 Spring Boot / 后端业务中应该如何落地？
+
+## 核心方法论
+
+### 1. 用类型表达约束
+
+Java 最大的优势之一是静态类型。不要把所有东西都写成 `String`、`Map<String, Object>` 或裸 `Object`。
+
+更好的做法：
+
+- 用类表达业务对象。
+- 用 enum 表达有限状态。
+- 用泛型表达容器元素类型。
+- 用接口表达可替换能力。
+- 用 Optional 显式表达“可能没有结果”。
+
+反例：
+
+```java
+Map<String, Object> order = new HashMap<>();
+order.put("status", "1");
+order.put("amount", "99.9");
+```
+
+更稳的写法：
+
+```java
+class Order {
+    private OrderStatus status;
+    private BigDecimal amount;
+}
+
+enum OrderStatus {
+    CREATED, PAID, CANCELLED
+}
+```
+
+核心：能让编译器帮你发现的问题，就不要留到运行时。
+
+### 2. 用封装控制变化
+
+封装不是简单地把字段设成 `private`，而是把变化点关在对象内部，让外部只依赖稳定行为。
+
+实践原则：
+
+- 字段尽量私有。
+- 对外暴露业务方法，而不是暴露所有 setter。
+- 构造器或工厂方法保证对象创建后处于有效状态。
+- 不把内部集合直接返回给调用方修改。
+
+反例：
+
+```java
+order.setStatus(OrderStatus.PAID);
+order.setPaidAt(LocalDateTime.now());
+order.setPayAmount(amount);
+```
+
+更好的写法：
+
+```java
+order.pay(amount, LocalDateTime.now());
+```
+
+核心：调用方应该表达业务意图，而不是手动修改对象内部零件。
+
+### 3. 用组合和接口管理复用
+
+继承容易把父类实现细节暴露给子类，长期会形成脆弱层级。组合更适合表达“使用某种能力”，接口更适合表达“依赖某种能力”。
+
+优先顺序：
+
+1. 能用普通方法解决，就不用继承。
+2. 能用组合解决，就不要继承实现类。
+3. 需要多种实现替换时，抽接口。
+4. 只有明确存在“是一种”关系时，再考虑继承。
+
+典型场景：
+
+```java
+interface DiscountPolicy {
+    BigDecimal discount(Order order);
+}
+
+class PromotionService {
+    private final DiscountPolicy discountPolicy;
+}
+```
+
+核心：复用不是复制代码，也不是继承一切，而是把变化点稳定地接入系统。
+
+### 4. 用函数式表达局部变化
+
+Java 8 的 Lambda 让行为可以作为参数传递。它适合处理“小而清晰”的变化，例如过滤条件、转换规则、排序规则、回调动作。
+
+适合：
+
+- `Predicate<T>`：判断。
+- `Function<T, R>`：转换。
+- `Consumer<T>`：消费。
+- `Supplier<T>`：提供。
+- `Comparator<T>`：排序。
+
+不适合：
+
+- 在 Lambda 里写很长业务流程。
+- 在 Stream 里修改外部变量。
+- 为了函数式写法牺牲可读性。
+- 把异常处理塞进复杂 Lambda。
+
+核心：Lambda 是表达局部行为的工具，不是替代清晰业务建模的工具。
+
+### 5. 用 Stream 表达数据流水线
+
+Stream 的价值是把“取数据 -> 过滤 -> 转换 -> 分组 -> 汇总”写成清晰流水线。
+
+适合：
+
+```java
+Map<Department, List<Employee>> enabledEmployees = employees.stream()
+        .filter(Employee::isEnabled)
+        .collect(Collectors.groupingBy(Employee::getDepartment));
+```
+
+不适合：
+
+```java
+users.stream()
+        .map(user -> {
+            user.setStatus("ACTIVE");
+            userRepository.save(user);
+            sendMessage(user);
+            return user;
+        })
+        .collect(Collectors.toList());
+```
+
+这类有副作用、涉及数据库和外部系统的流程，用普通 `for` 循环或明确的服务方法更可读。
+
+核心：Stream 适合数据变换，不适合隐藏复杂业务动作。
+
+### 6. 用异常表达失败边界
+
+异常不是日志替代品，也不是流程控制工具。异常应该表达“当前路径无法按正常语义继续”。
+
+实践原则：
+
+- 不吞异常。
+- 不捕获后只打印日志然后继续。
+- 业务异常要带清晰错误码或错误信息。
+- 资源关闭交给 try-with-resources。
+- 对外接口统一异常响应，对内保留足够上下文。
+
+核心：失败路径也是系统设计的一部分。
+
+### 7. 用并发工具隔离共享状态
+
+并发难点不是创建线程，而是共享状态。多数业务代码应该优先使用线程池、并发集合、阻塞队列、CompletableFuture 等高层工具。
+
+优先级：
+
+1. 尽量不可变，避免共享可变状态。
+2. 能局部变量解决，就不要共享字段。
+3. 能用并发集合，就不要手写锁。
+4. 能用线程池，就不要直接 new Thread。
+5. 能用 CompletableFuture 编排异步，就不要手写 wait/notify。
+
+核心：并发设计的第一原则是减少共享，第二原则才是同步共享。
+
 ## 章节核心速读
 
 ### 第 1 章 对象无处不在

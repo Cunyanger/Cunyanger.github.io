@@ -3,7 +3,9 @@
     <section class="book-shelf__hero">
       <p>Reading Notes</p>
       <h1 id="books-title">Books</h1>
-      <span>把读过的书整理成可回看的问题、观点和行动记录。</span>
+      <span
+        >一篇文章固然无法代替作者的思考与心血，但它可以决定你是否继续深度阅读，了解全貌找到重点，一步步靠近你要“攀登的山”。</span
+      >
       <HaloSearch
         v-model="searchKeyword"
         class="book-shelf__search"
@@ -157,8 +159,7 @@ const normalizeAsset = (value) => {
   return withBase(value);
 };
 
-const toLoadingRoute = (target) =>
-  `/loading/?to=${encodeURIComponent(target)}`;
+const toLoadingRoute = (target) => `/loading/?to=${encodeURIComponent(target)}`;
 
 const loadBooks = async () => {
   const bookRoutes = Object.entries(routes.value).filter(
@@ -259,7 +260,8 @@ watch(currentPage, (page) => {
   inset: 0;
   z-index: 1;
   content: "";
-  background: linear-gradient(
+  background:
+    linear-gradient(
       120deg,
       rgba(2, 6, 23, 0.82),
       rgba(15, 23, 42, 0.74) 46%,
@@ -268,7 +270,11 @@ watch(currentPage, (page) => {
     linear-gradient(90deg, rgba(37, 99, 235, 0.12), rgba(245, 158, 11, 0.08)),
     linear-gradient(rgba(37, 99, 235, 0.16) 1px, transparent 1px),
     linear-gradient(90deg, rgba(20, 184, 166, 0.14) 1px, transparent 1px);
-  background-size: auto, auto, 52px 52px, 52px 52px;
+  background-size:
+    auto,
+    auto,
+    52px 52px,
+    52px 52px;
   pointer-events: none;
 }
 

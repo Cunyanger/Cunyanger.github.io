@@ -1,6 +1,6 @@
 <template>
   <div v-if="visible" class="page-particle-backdrop" aria-hidden="true">
-    <ParticleBackground track-window />
+    <ParticleBackground track-window :fps="18" />
   </div>
 </template>
 

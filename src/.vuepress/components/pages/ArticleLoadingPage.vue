@@ -1,6 +1,6 @@
 <template>
   <main class="article-loading" aria-labelledby="loading-title">
-    <ParticleBackground track-window />
+    <ParticleBackground track-window :fps="18" />
 
     <div class="article-loading__panel">
       <AnimatedCircularProgressbar :value="progress" />
