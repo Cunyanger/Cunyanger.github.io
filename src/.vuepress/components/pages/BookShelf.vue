@@ -4,7 +4,7 @@
       <p>Reading Notes</p>
       <h1 id="books-title">Books</h1>
       <span
-        >一篇文章固然无法代替作者的思考与心血，但它可以决定你是否继续深度阅读，了解全貌找到重点，一步步靠近你要“攀登的山”。</span
+        >一篇文章固然无法取代作者的思考与心血，但可以决定是否继续深度阅读，了解全貌找到重点，一步步靠近你要“攀登的山”。</span
       >
       <HaloSearch
         v-model="searchKeyword"
@@ -62,7 +62,8 @@
                 v-for="tag in book.displayTags"
                 :key="tag"
                 class="book-badge"
-              >{{ tag }}</span>
+                >{{ tag }}</span
+              >
             </BookHeader>
             <BookTitle>{{ book.title }}</BookTitle>
             <BookDescription>{{ book.author }}</BookDescription>
@@ -234,10 +235,7 @@ const availableTags = computed(() => {
 
   return [...counts.entries()]
     .map(([name, count]) => ({ name, count }))
-    .sort(
-      (a, b) =>
-        b.count - a.count || a.name.localeCompare(b.name, "zh-CN"),
-    );
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "zh-CN"));
 });
 
 const filteredBooks = computed(() => {
@@ -246,8 +244,7 @@ const filteredBooks = computed(() => {
   return books.value.filter(
     (book) =>
       (!selectedTag.value || book.tags.includes(selectedTag.value)) &&
-      (!keyword ||
-        book.title.toLocaleLowerCase("zh-CN").includes(keyword)),
+      (!keyword || book.title.toLocaleLowerCase("zh-CN").includes(keyword)),
   );
 });
 
@@ -286,7 +283,10 @@ watch(selectedTag, () => {
   currentPage.value = 1;
 });
 watch(availableTags, (tags) => {
-  if (selectedTag.value && !tags.some((tag) => tag.name === selectedTag.value)) {
+  if (
+    selectedTag.value &&
+    !tags.some((tag) => tag.name === selectedTag.value)
+  ) {
     selectedTag.value = "";
   }
 });
