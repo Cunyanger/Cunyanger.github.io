@@ -9,6 +9,11 @@ article: false
 
 <div class="blog-grid">
   <article class="post-card">
+    <p class="post-meta">2026-08-07 · Java · 25 分钟</p>
+    <h3><a href="/posts/junit-practical-guide.html">JUnit 从入门到工程实践：背景、用法、验证示例与测试规范</a></h3>
+    <p>系统讲解 JUnit 的历史和架构、常用注解与断言、参数化测试、Mockito 和 Spring Boot 集成，并通过完整订单金额示例总结测试流程与工程规范。</p>
+  </article>
+  <article class="post-card">
     <p class="post-meta">2026-07-27 · AI 原生应用 · 20 分钟</p>
     <h3><a href="/posts/springboot-vue-langchain-electricity-price-battery-agent.html">Spring Boot + Vue 对接 LangChain：电价预测与电池充放电 Agent 实现方案</a></h3>
     <p>设计一个电价预测与储能充放电 Agent，覆盖 Spring Boot 后端、Vue 管理端、LangChain 编排、预测模型、优化器、安全校验和设备指令闭环。</p>
@@ -112,6 +117,7 @@ article: false
   <li>Inspira UI</li>
   <li>LangChain</li>
   <li>Spring Boot</li>
+  <li>JUnit</li>
   <li>阿里百炼</li>
   <li>储能</li>
   <li>电价预测</li>
