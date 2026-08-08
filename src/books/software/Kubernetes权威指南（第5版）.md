@@ -1,6 +1,6 @@
 ---
 title: Kubernetes权威指南：从Docker到Kubernetes实践全接触（第5版）
-date: 2026-08-03
+date: 2026-08-08
 article: false
 icon: pen-to-square
 bookCategory: 容器技术与云原生
@@ -10,14 +10,14 @@ category:
   - 容器技术
   - 云原生
   - DevOps
-bookCover: https://openbookcover.yuewen.com/qdbimg/349573/c_26763832509462206/180.webp?h=ukb6624wvik2
+bookCover: /assets/images/kubernetes-definitive-guide-5th-cover.png
 cover:
 tag:
   - Kubernetes
   - Docker
   - 云原生
 isOriginal: true
-excerpt: 深度精读龚正、吴治辉、闫健勇《Kubernetes权威指南》第5版，沿集群与应用生命周期梳理声明式资源、Pod与Service、调度和控制器、安全、网络、存储、API扩展、运维与排障，并系统校正Kubernetes 1.19时代配置与现代稳定API之间的差异。
+excerpt: 深度精读龚正、吴治辉、闫健勇《Kubernetes权威指南》第5版，按原书12章与附录完整梳理声明式资源、调度控制、安全、网络、存储、API扩展、运维和排障，并以Kubernetes 1.36官方资料校正1.19时代配置。
 ---
 
 # 《Kubernetes 权威指南》第 5 版深度阅读
@@ -25,6 +25,8 @@ excerpt: 深度精读龚正、吴治辉、闫健勇《Kubernetes权威指南》�
 > **文本与版本边界**：本文依据龚正、吴治辉、闫健勇所著《Kubernetes 权威指南：从 Docker 到 Kubernetes 实践全接触（第 5 版）》全文整理。电子工业出版社 2021 年 6 月出版，ISBN `978-7-121-40998-1`。版权页标注全书约 141 万字；正文共 12 章，明确覆盖 Kubernetes 1.0 ～ 1.19 的主要特性。
 >
 > **标注规则**：`【原书】`表示书中明确论述或案例，`【原书示例整理】`表示 PDF 中代码页为图片，本文依据紧邻正文对字段的逐项解释恢复为可读代码，`【纠正】`表示对错误或过时内容的校正，`【书外扩展】`表示为现代实践补充。历史内容不会被静默改写成作者观点。
+>
+> **核验基线（2026-08-08）**：原书仍以 Kubernetes 1.19 为事实主线；现代补充依据 Kubernetes 官方发布页、`stable.txt` 和文档核验。核验时最新稳定分支为 1.36，最新补丁版本为 1.36.3。本文不会用 1.36 的行为反向改写作者在 1.19 时代的叙述。
 
 ---
 
@@ -75,6 +77,8 @@ mindmap
       第10章 资源 运维 监控 日志 审计 Dashboard Helm
       第11章 Event 日志 常见故障
       第12章 Windows GPU VPA 生态演进
+    参数查阅
+      附录A 控制面与节点组件启动参数
 ```
 
 从资源生命周期看，全书不是 12 个孤立专题，而是一条连续链路：
@@ -111,7 +115,7 @@ Kubernetes 的突出优势是**声明式 API + 控制器模式 + 标准扩展接
 
 ---
 
-## 二、十二章逐章解读
+## 二、从前言到附录的章节总览
 
 | 章节     | 章节主题                     | 本章的核心内容                                                                                                                         | 问题与解决路径                                                                                          |
 | -------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -128,12 +132,24 @@ Kubernetes 的突出优势是**声明式 API + 控制器模式 + 标准扩展接
 | 第 10 章 | Kubernetes 运维管理          | Node 隔离、Label、Namespace、Request/Limit/QoS/Quota、驱逐、PDB、Metrics Server、Prometheus/Grafana、EFK、审计、Dashboard、Helm        | 先划分租户和资源预算，再监控、审计和打包发布；主动维护用 PDB 保留可用副本，压力驱逐按 QoS 和优先级决策  |
 | 第 11 章 | Trouble Shooting             | Event、容器日志、systemd 服务日志、常见失败和社区求助                                                                                  | 从对象状态和 Event 开始，向容器日志、节点组件日志逐层下钻，避免一开始就在所有节点盲查                   |
 | 第 12 章 | 开发中的新功能               | Windows Worker、GPU Device Plugin、VPA、CNCF 生态和 SIG 开发模式                                                                       | 异构节点用 OS/架构标签和调度隔离；GPU 作为扩展资源；VPA 依据历史用量建议或调整 Request                  |
+| 附录 A   | 核心服务配置详解             | 公共参数；kube-apiserver、kube-controller-manager、kube-scheduler、kubelet、kube-proxy 的启动参数                                        | 用组件 `--help` 与版本化配置 API 核对实际参数；不要把 1.19 参数表直接复制到现代集群                     |
 
 ---
 
-## 三、沿 Kubernetes 生命周期掌握关键技术
+## 三、按原书顺序走完 Kubernetes 生命周期
+
+Kubernetes 的生命周期可以概括为“建模与建群 → 调度运行 → 服务接入 → 控制与治理 → 网络存储 → 平台扩展 → 持续运营 → 故障恢复”。以下阶段标题服从这条生命周期，但第 1 章到第 12 章、附录 A 的顺序完全保持原书顺序；跨章概念只做前后引用，不提前替代后续章节。
 
 ### 3.1 建模起点：从容器到 Pod、Deployment 与 Service【第 1 章】
+
+#### 第 1 章路线
+
+| 原书小节 | 入门阶段建立的认识 |
+| -------- | ------------------ |
+| 1.1 了解 Kubernetes | 从 Google Borg 经验、容器技术和分布式系统背景定义 Kubernetes 的定位。 |
+| 1.2 为什么使用 Kubernetes | 归纳轻量、开放、可移植、自动调度与自愈等能力，并指出它围绕 Service 组织应用。 |
+| 1.3 简单实例 | 按环境准备、MySQL、Tomcat、浏览器访问四步跑通两层 Web 应用，第一次看到 Deployment 与 Service 的配合。 |
+| 1.4 概念和术语 | 先总览资源对象，再按集群类、应用类、存储类、安全类组织 Node、Pod、控制器、Service、配置、PV/PVC、ServiceAccount 等对象。 |
 
 #### 为什么不能只管理容器
 
@@ -199,6 +215,18 @@ spec:
 
 ### 3.2 集群诞生：控制面、kubeadm、高可用与 CRI【第 2 章】
 
+#### 第 2 章路线
+
+| 原书小节 | 安装与操作主线 |
+| -------- | -------------- |
+| 2.1 系统要求 | 明确 Linux、主机、网络、运行时和资源前提；书中基线是 CentOS 7 与 Kubernetes 1.19。 |
+| 2.2 kubeadm | 依次安装工具、修改配置、拉取镜像、初始化控制面、加入 Node、安装 CNI 并验证集群。 |
+| 2.3 二进制高可用 | 从 CA 和 etcd 开始，部署 3 个控制面、Node 服务与 token 认证，展示组件之间真实的证书和参数关系。 |
+| 2.4 私有镜像库 | 让节点能够认证并拉取企业内部镜像，处理隔离网络和镜像分发。 |
+| 2.5 版本升级 | 分别讲解二进制替换和 kubeadm 升级；升级本质还包括 API、etcd、CNI/CSI 与版本偏差治理。 |
+| 2.6 CRI | 从接口、组件、Pod/容器生命周期到 Docker-CRI 实验，解释 kubelet 与运行时如何解耦。 |
+| 2.7 kubectl | 系统整理命令、资源类型、公共参数、格式化输出和常用操作，是后续所有实验的入口。 |
+
 #### 原书部署路线及其架构意义
 
 第 2 章给出两条路线：
@@ -239,7 +267,18 @@ flowchart TB
 
 自建控制面意味着自己负责证书轮换、etcd 快照与恢复、跨可用区延迟、版本偏差、CNI/CSI 升级和灾难演练。组织若没有明确的基础设施学习或合规要求，托管 Kubernetes 可以减少控制面负担。kubeadm 解决“如何正确引导”，不自动解决“如何长期运营”。
 
-### 3.3 声明与注入：ConfigMap、Secret、Downward API【第 3、6 章】
+### 3.3 组织 Pod：定义、共享卷、ConfigMap 与 Downward API【第 3 章上】
+
+#### 第 3 章前半路线
+
+| 原书小节 | 这一节在解决什么问题 |
+| -------- | -------------------- |
+| 3.1 Pod 定义详解 | 逐字段解释 Pod、容器、端口、环境变量、资源、探针、Volume 与调度相关配置，建立读懂 YAML 的基础。 |
+| 3.2 Pod 的基本用法 | 从单容器、多容器到静态 Pod，说明 Pod 是共同调度和共享上下文的最小单元，而不是单个进程的别名。 |
+| 3.3 静态 Pod | 说明 kubelet 如何直接从本地 manifest 管理 Pod，以及 API Server 中 mirror Pod 与真实静态 Pod 的关系。 |
+| 3.4 Pod 容器共享 Volume | 用同一个 Volume 在同一 Pod 的容器间交换文件，形成 sidecar 等协作模式。 |
+| 3.5 Pod 的配置管理 | 讲解 ConfigMap 的命令行、YAML、环境变量和挂载文件用法，以及大小、命名空间和更新限制。 |
+| 3.6 Downward API | 把 Pod 名称、Label、Annotation、IP 和资源约束等运行上下文注入环境变量或文件，避免应用反查控制面。 |
 
 #### 配置与镜像分离
 
@@ -254,15 +293,6 @@ data:
   LOG_LEVEL: info
   app.yaml: |
     featureEnabled: true
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: db-credentials
-type: Opaque
-stringData:
-  username: app
-  password: change-me
 ---
 apiVersion: v1
 kind: Pod
@@ -280,26 +310,30 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: password
 ```
 
 #### 术语、限制与安全纠正
 
 - **ConfigMap**：保存非敏感配置的 namespaced API 对象。
-- **Secret**：保存敏感字节数据的 API 对象；`data` 是 Base64 编码，`stringData` 由 API Server 转换为 `data`。
 - **Downward API**：把 Kubernetes 已知的 Pod/容器元数据向下暴露给容器。
-- **Projected Volume**：把 Secret、ConfigMap、ServiceAccount Token 等多个来源投射到同一目录。
+- **Projected Volume**：把 ConfigMap、Secret、ServiceAccount Token 等多个来源投射到同一目录；Secret 的安全边界在第 6 章讨论。
 - **immutable configuration**：不可变 ConfigMap/Secret，适合降低 watch 压力并防止意外修改；变更时创建新名称和滚动更新引用者。
 
-【纠正，对应 1.4.3、6.5】原书写到 Kubernetes 1.7 以后 Secret 数据“可以以加密形式保存”。必须补充：Secret 的 Base64 **不是加密**；etcd 静态加密需要 API Server 的 EncryptionConfiguration 显式启用，传输还要依赖 TLS，访问面依赖 RBAC。更严格场景应结合外部密钥管理、Secrets Store CSI Driver 或专门的 secret manager。
-
-环境变量在进程启动后不会自动更新；Volume 形式的 ConfigMap/Secret 通常会延迟刷新，但使用 `subPath` 挂载时不会获得自动更新。应用是否热加载配置也必须明确。简单说，ConfigMap 是“外置说明书”，Secret 是“权限受控的敏感说明书”，但把纸张折成 Base64 并没有给它上锁。
+环境变量在进程启动后不会自动更新；Volume 形式的 ConfigMap 通常会延迟刷新，但使用 `subPath` 挂载时不会获得自动更新。应用是否热加载配置也必须明确。简单说，ConfigMap 是“外置说明书”，Downward API 则是运行平台夹在说明书里的“本实例信息页”。
 
 ### 3.4 Pod 运行：探针、控制器、调度、升级与扩缩容【第 3 章】
+
+#### 第 3 章后半路线
+
+| 原书小节 | 这一节在解决什么问题 |
+| -------- | -------------------- |
+| 3.7 生命周期和重启策略 | 区分 Pod Phase、容器状态与 `restartPolicy`，解释应用退出后由谁、按什么策略重启。 |
+| 3.8 健康与可用性检查 | 用 liveness、readiness、startup probe 分别判断“要不要重启”“能否接流量”“是否仍在启动”。 |
+| 3.9 Pod 调度 | 按顺序覆盖 Deployment/RC、NodeSelector、节点与 Pod 亲和、污点容忍、优先级抢占、DaemonSet、Job、CronJob、自定义调度器和容灾调度。 |
+| 3.10 Init Container | 把依赖等待、配置生成、权限准备等一次性前置任务与业务容器分开，并保证顺序完成。 |
+| 3.11 升级和回滚 | 讲解 Deployment 滚动更新、历史版本、暂停/恢复，以及 DaemonSet、StatefulSet 的不同更新策略。 |
+| 3.12 扩缩容 | 从 `kubectl scale` 进入 HPA，说明资源指标、自定义指标和算法如何驱动副本变化。 |
+| 3.13 StatefulSet 实战 | 用 MongoDB 说明稳定网络身份、有序部署与 PVC 模板，但数据库成员关系和备份仍需应用或 Operator 负责。 |
 
 #### 三种探针回答三个不同问题
 
@@ -413,6 +447,17 @@ HPA 的 CPU utilization 以 Request 为分母，没有合理 Request 就没有�
 
 ### 3.5 服务被发现：Service、CoreDNS、EndpointSlice 与 Ingress【第 4 章】
 
+#### 第 4 章路线
+
+| 原书小节 | 这一节在解决什么问题 |
+| -------- | -------------------- |
+| 4.1 Service 定义 | 从 selector、端口、ClusterIP、会话亲和、外部流量策略等字段建立稳定入口。 |
+| 4.2 概念和原理 | 顺序讲解负载均衡、多端口、无 selector 的外部服务、NodePort/LoadBalancer、协议、发现、Headless、EndpointSlice 与拓扑。 |
+| 4.3 CoreDNS | 部署和配置集群 DNS，把 Service 名字转换为可用地址。 |
+| 4.4 NodeLocal DNSCache | 将缓存下沉到节点，降低集中式 DNS 与 UDP conntrack 压力。 |
+| 4.5 Pod DNS | 解释 Pod 域名、hostname/subdomain、`dnsPolicy` 与 `dnsConfig`。 |
+| 4.6 Ingress | 由 Ingress 描述七层规则，由 Ingress Controller 实际实现 HTTP(S) 路由和 TLS。 |
+
 #### 稳定入口如何屏蔽 Pod 变化
 
 第 4 章把 Service 称为 Kubernetes 实现微服务的核心概念。Selector 找到 Pod，控制器生成 Endpoint/EndpointSlice，kube-proxy 或其他数据面把 ClusterIP 流量转发到后端。
@@ -474,6 +519,16 @@ Ingress API 只描述有限 HTTP(S) 路由，重写、认证、限流等通常�
 
 ### 3.6 控制面原理：API、List-Watch、Controller 与 Scheduler【第 5 章】
 
+#### 第 5 章路线
+
+| 原书小节 | 组件职责与边界 |
+| -------- | -------------- |
+| 5.1 API Server | 暴露 REST API，完成校验、认证授权、准入、版本转换并持久化，是组件通信的数据总线。 |
+| 5.2 Controller Manager | 运行副本、Node、ResourceQuota、Namespace、Service/Endpoint 等控制器，使实际状态向期望状态收敛。 |
+| 5.3 Scheduler | 对未绑定 Pod 进行排队、过滤、评分和绑定；Scheduler Framework 提供插件扩展点。 |
+| 5.4 kubelet | 管理本节点 Pod、探针、状态与运行时；书中还介绍 cAdvisor、PLEG、RuntimeClass 等节点机制。 |
+| 5.5 kube-proxy | 从用户态代理到 iptables、IPVS，展示 Service 数据面逐步移入内核的演进。 |
+
 #### API Server 是总线，不是所有工作的执行者
 
 原书对 API Server 的原话是：
@@ -522,6 +577,17 @@ kubelet 负责本节点 Pod 全生命周期、探针和状态上报；它不负�
 
 ### 3.7 API 请求的安全链：认证、授权、准入与运行时限制【第 6 章】
 
+#### 第 6 章路线
+
+| 原书小节 | 防护目标 |
+| -------- | -------- |
+| 6.1 认证 | 用客户端证书、Bearer Token、OIDC 或认证代理回答“调用者是谁”。 |
+| 6.2 授权 | 比较 ABAC、Webhook、RBAC、Node Authorizer，回答“这个身份能做什么”。 |
+| 6.3 Admission Control | 在授权之后、持久化之前执行默认、校验、配额和安全策略。 |
+| 6.4 ServiceAccount | 给 Pod 内程序提供 Kubernetes 身份，并由 RBAC 约束其 API 权限。 |
+| 6.5 Secret | 管理凭据、证书、镜像仓库认证等敏感数据，但仍需静态加密、访问控制与轮换。 |
+| 6.6 Pod 安全 | 原书以 PSP 和 SecurityContext 约束特权、用户、Capability、SELinux 与只读文件系统。 |
+
 #### 四道边界
 
 ```text
@@ -567,6 +633,26 @@ roleRef:
 - **SecurityContext**：Pod/Container 的 UID、GID、capability、seccomp、只读根文件系统等运行安全设置。
 - **OIDC**：OpenID Connect，基于 OAuth 2.0 的身份层，可把外部 IdP 接入 API Server。
 
+#### Secret 不是“做过 Base64 就安全”
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-credentials
+type: Opaque
+stringData:
+  username: app
+  password: change-me
+```
+
+- **Secret**：保存敏感字节数据的 namespaced API 对象；`data` 是 Base64 编码，`stringData` 由 API Server 转换为 `data`。
+- **encryption at rest**：API Server 写入 etcd 前按 EncryptionConfiguration 加密敏感资源，不能由 Base64 代替。
+- **KMS**：Key Management Service，把密钥保护和轮换交给外部密钥系统，降低密钥与密文同处一地的风险。
+- **short-lived token**：短期令牌；现代 ServiceAccount 投射令牌可绑定受众和过期时间，比长期静态 token 更易控制泄露窗口。
+
+【纠正，对应 1.4.3、6.5】原书写到 Kubernetes 1.7 以后 Secret 数据“可以以加密形式保存”。必须补充：Secret 默认的 Base64 **不是加密**；etcd 静态加密要显式配置，传输依赖 TLS，读取权限依赖 RBAC。更严格场景还应结合 KMS、Secrets Store CSI Driver 或专门的 Secret Manager。环境变量中的 Secret 在进程启动后不会自动更新，进程转储和调试接口也可能暴露它；文件投射虽然可轮换，应用仍需实现重载。
+
 #### PSP 已退出，思想并未退出
 
 【纠正，对应 6.6】PodSecurityPolicy 在原书的 1.19 时代为 Beta，后来已废弃并在 Kubernetes 1.25 删除。现代内置方案是 Pod Security Admission 按 Namespace 标签执行 Privileged、Baseline、Restricted 标准；复杂策略可使用 ValidatingAdmissionPolicy、Kyverno 或 OPA Gatekeeper。
@@ -585,6 +671,20 @@ metadata:
 工作负载本身仍应设置 `runAsNonRoot`、`allowPrivilegeEscalation: false`、只读根文件系统、删除多余 Linux capabilities 和合适的 seccomp profile。Namespace 不是强安全边界，默认 ServiceAccount token、节点权限、网络和存储也要一起治理。
 
 ### 3.8 Pod 获得网络：namespace、CNI、Service 数据面与 NetworkPolicy【第 7 章】
+
+#### 第 7 章路线
+
+| 原书小节 | 数据包视角下的作用 |
+| -------- | ------------------ |
+| 7.1 网络模型 | 规定每个 Pod 有独立 IP，Pod 之间无需 NAT 即可直接通信，Node 与 Pod 也能互通。 |
+| 7.2 Docker 网络基础 | 解释 network namespace、veth、bridge、iptables/Netfilter 和路由，为后面的数据路径打基础。 |
+| 7.3 Docker 网络实现 | 对比无端口映射与有端口映射时的主机规则，并指出单机 bridge 难以直接跨主机。 |
+| 7.4 Kubernetes 网络实现 | 区分同 Pod 容器、同节点 Pod 和跨节点 Pod 的通信路径。 |
+| 7.5 Pod 与 Service 实战 | 从 RC/Pod 到 Service，实际观察容器地址、规则和访问链路。 |
+| 7.6 CNI | 先对比 Docker CNM，再解释 CNI 配置、插件调用和 IPAM，说明 kubelet/运行时如何为 Pod 接网。 |
+| 7.7 开源网络方案 | 比较 Flannel、Open vSwitch、直接路由和 Calico 的封装、路由与策略取舍。 |
+| 7.8 NetworkPolicy | 用 selector 和 ingress/egress allow-list 隔离工作负载，并强调 CNI 必须实现策略。 |
+| 7.9 IPv4/IPv6 双栈 | 配置双栈集群并验证 Pod 与 Service 地址族，是原书面向 1.19 的新特性之一。 |
 
 #### 原书的网络原则
 
@@ -649,6 +749,15 @@ spec:
 【时效说明】原书花大量篇幅解释 Docker bridge、Open vSwitch、Flannel 与 Calico，这些原理仍有价值；现代数据面还广泛采用 eBPF，能够减少长 iptables 链并整合网络、策略和可观测性。选择 CNI 时应比较封装开销、底层路由条件、NetworkPolicy 语义、双栈、加密、运维工具和升级路径，而不是只看吞吐基准。
 
 ### 3.9 数据跨越 Pod：Volume、PV/PVC、StorageClass 与 CSI【第 8 章】
+
+#### 第 8 章路线
+
+| 原书小节 | 存储生命周期中的位置 |
+| -------- | -------------------- |
+| 8.1 存储机制 | 先区分临时卷、配置投射、网络存储和 Node 本地卷，再说明卷如何映射进容器。 |
+| 8.2 PV/PVC | 讲清供应、申请、匹配、绑定、挂载、回收，以及访问模式、StorageClass 和延迟绑定。 |
+| 8.3 GlusterFS/Heketi 实战 | 用当时的方案串起动态供应全流程；流程思想可迁移，具体插件已过时。 |
+| 8.4 CSI | 解释 Controller/Node 插件、sidecar、注册、拓扑、快照和 in-tree 迁移，建立现代存储驱动模型。 |
 
 #### 从“目录挂载”到声明式供应
 
@@ -726,6 +835,15 @@ spec:
 
 ### 3.10 扩展平台：客户端、CRD、Controller 与聚合 API【第 9 章】
 
+#### 第 9 章路线
+
+| 原书小节 | 开发者得到的能力 |
+| -------- | ---------------- |
+| 9.1 REST | 用资源、HTTP 方法、状态码和无状态约束理解 Kubernetes API 的外形。 |
+| 9.2 Kubernetes API | 解释 API 路径、版本演进、Group、REST 方法、响应与错误，为客户端和扩展开发奠基。 |
+| 9.3 Fabric8 | 以 Java 客户端演示连接配置、CRUD、watch、Pod 日志和其他客户端库。 |
+| 9.4 API 扩展 | 比较 CRD 与 API Aggregation：前者复用主 API Server 存储，后者运行扩展 API Server。 |
+
 #### API Group 与版本演进
 
 第 9 章先讲 REST，再分析 Core Group `/api/v1` 与命名 API Group `/apis/<group>/<version>`，并以 Fabric8 Java Client 进行 CRUD、watch 等操作。使用官方或成熟客户端库的优势是处理认证、序列化、watch 重连和资源版本，而不是手写脆弱 HTTP。
@@ -779,6 +897,22 @@ CRD 只创建 API，不会自动执行备份；还必须有 Controller watch `Ba
 简单 CRD+Controller 易于部署和复用 Kubernetes 认证、RBAC、存储；需要自定义存储、特殊协议或完整 API Server 行为时才考虑 Aggregated API Server。平台扩展的风险是把错误自动化：必须定义状态机、超时、速率限制、升级兼容和灾难恢复。
 
 ### 3.11 运营集群：资源、公平性、可观测性、审计与 Helm【第 10 章】
+
+#### 第 10 章路线
+
+| 原书小节 | 运维闭环中的任务 |
+| -------- | ---------------- |
+| 10.1 Node 管理 | 用 cordon、drain、uncordon 隔离和恢复节点，并讨论扩容。 |
+| 10.2 更新 Label | 调整对象标签，使 selector、调度和组织方式能够演进。 |
+| 10.3 Namespace/Context | 隔离资源命名和部分策略，通过 kubeconfig context 降低误操作。 |
+| 10.4 资源管理 | 连续讲解 Request/Limit、LimitRange、QoS、Quota、共享 PID namespace、PID 限制、CPU Manager 与 Topology Manager。 |
+| 10.5 压力驱逐 | 从 eviction signal、阈值和节点状态进入镜像/容器回收与 Pod 驱逐，解释节点如何自保。 |
+| 10.6 PDB | 在 drain、升级等自愿中断时限制同时不可用的副本数。 |
+| 10.7 监控 | 区分 Metrics Server 的资源指标与 Prometheus/Grafana 的长期监控。 |
+| 10.8 日志 | 讨论 stdout/stderr、节点日志、Fluentd+Elasticsearch+Kibana 以及 sidecar 采集。 |
+| 10.9 审计 | 由 API Server Audit Policy 记录身份、动作、对象与阶段，回答控制面“谁做了什么”。 |
+| 10.10 Dashboard | 通过 Web UI 管理对象，同时暴露出认证、授权和对外暴露面的安全要求。 |
+| 10.11 Helm | 从 v2/Tiller 迁移语境进入 v3，讲解 release、Chart、values、模板和私有仓库。 |
 
 #### Request、Limit、QoS 和配额是一套系统
 
@@ -858,6 +992,16 @@ Helm 是 Kubernetes YAML 的打包、模板化和 release 管理工具，不是 
 
 ### 3.12 故障发生后：从对象事实到组件日志【第 11 章】
 
+#### 第 11 章路线
+
+| 原书小节 | 排障动作 |
+| -------- | -------- |
+| 11.1 Event | 先用 `get`/`describe` 观察对象状态、关联关系和近期事件，定位 Pending、拉镜像或调度失败。 |
+| 11.2 容器日志 | 用 `kubectl logs` 和容器名进入应用层，原书同时提醒容器删除后本地日志可能丢失。 |
+| 11.3 组件日志 | 查看 systemd journal 或组件日志，将全局故障归因到 API Server、Controller、Scheduler、kubelet、kube-proxy 或 etcd。 |
+| 11.4 常见问题 | 依次分析 pause 镜像拉取失败、启动命令立即退出导致持续重启、服务名不可达三类案例。 |
+| 11.5 寻求帮助 | 在提交社区问题前收集版本、资源定义、事件、日志、复现步骤与已尝试操作。 |
+
 #### 原书的三层排障方法
 
 第 11 章给出一条很实用的顺序：先看对象状态和 Event；再进容器或看容器日志；最后对全局问题联合分析 API Server、Scheduler、Controller Manager、kubelet、kube-proxy 日志。
@@ -907,6 +1051,13 @@ flowchart TD
 
 第 12 章体现了 Kubernetes 从 Linux 容器平台向异构基础设施扩展：Windows Server Worker、GPU Device Plugin、Vertical Pod Autoscaler，以及 CNCF、SIG 驱动的社区路线。
 
+| 原书小节 | 该能力的主线 |
+| -------- | ------------ |
+| 12.1 Windows 容器 | 从安装 Docker EE、部署 kubelet/kube-proxy 与 Flannel，到运行 Windows Pod；现代环境必须改按受支持的 Windows、containerd 和网络方案矩阵实施。 |
+| 12.2 GPU | 安装驱动与 Device Plugin，把 GPU 注册为 `nvidia.com/gpu` 等扩展资源供 Pod 整数申请。 |
+| 12.3 VPA | 由 Recommender、Updater、Admission Controller 形成建议或自动调整链路，并讨论与 HPA 的耦合和重建风险。 |
+| 12.4 生态与演进 | 从 CNCF、CRI/CNI/CSI、API 扩展、安全和自动化运维路线，落到 SIG/工作组驱动的开发模式。 |
+
 - **Windows Node**：运行 Windows 容器的 Worker；控制面仍运行在 Linux，Pod 需按 `kubernetes.io/os: windows` 调度，并遵守宿主机/镜像版本兼容。
 - **Device Plugin**：kubelet 插件机制，把 GPU 等厂商资源注册为扩展资源，例如 `nvidia.com/gpu`。
 - **VPA**：Vertical Pod Autoscaler，依据历史用量给出或应用 CPU/内存 Request 建议。
@@ -926,6 +1077,26 @@ resources:
 
 VPA 并非“自动调大就结束”：推荐模式可先只观察建议；自动更新可能重建 Pod；与 HPA 同时基于 CPU/内存会形成反馈竞争；StatefulSet 和单副本服务还要考虑中断。原书把这些列为发展中的能力是准确的，生产启用必须以 PDB、副本、维护窗口和回滚保护。
 
+### 3.14 参数是版本化接口，不是永久答案【附录 A】
+
+附录 A 的定位是“生产部署与日常运维的参数字典”。它依次列出公共参数、`kube-apiserver`、`kube-controller-manager`、`kube-scheduler`、`kubelet` 和 `kube-proxy` 的启动选项，补足第 2、5、10 章没有展开的配置面。原书建议使用 `cmd --help` 查看每个二进制的可用参数，这个方法今天仍成立；但 1.19 参数表只能解释历史配置，不能充当 1.36 的可复制模板。
+
+| 附录小节 | 参数影响面 | 阅读和迁移重点 |
+| -------- | ---------- | -------------- |
+| A.1 公共参数 | 日志、调试、配置文件和通用运行行为 | 许多基于 glog 的旧日志参数已经变化；先看目标版本 `--help` 与结构化日志文档。 |
+| A.2 kube-apiserver | HTTPS、etcd、认证授权、准入、审计、API 启用与限流 | 不安全端口已经移除；认证、加密、审计和准入必须按安全基线设计，参数间存在组合约束。 |
+| A.3 kube-controller-manager | 各控制器、同步周期、并发度、证书签发与 leader election | 并发和同步周期会改变 API 压力；云控制器、存储和路由等能力已持续外置。 |
+| A.4 kube-scheduler | 调度配置、profile、插件和 leader election | 现代版本优先使用版本化 `KubeSchedulerConfiguration`，不要依赖已删除的 policy 文件参数。 |
+| A.5 kubelet | Pod 管理、CRI、镜像回收、驱逐、资源管理、证书、DNS 与探针 | 优先使用版本化 `KubeletConfiguration`；dockershim 参数、旧 cAdvisor/日志参数和部分 feature gate 已变化或删除。 |
+| A.6 kube-proxy | iptables/IPVS/nftables 数据面、ClusterCIDR、conntrack 和健康端点 | 依据版本与 CNI 选择模式；若由 eBPF CNI 替代 kube-proxy，还要明确 Service 语义和升级责任由谁实现。 |
+
+- **flag**：命令行选项，通常形如 `--name=value`；它是否存在、默认值是什么，都属于具体版本行为。
+- **component config API**：组件的版本化配置对象，例如 `KubeletConfiguration`、`KubeSchedulerConfiguration`，比长串 flags 更便于审查和升级。
+- **feature gate**：按版本启用或关闭特性的开关；特性 GA 后 gate 可能锁定并最终移除，不应永久留在配置中。
+- **leader election**：Controller Manager、Scheduler 等多副本组件通过 Lease 选主，保证同一协调职责通常只有一个活跃执行者。
+
+【纠正，对应附录 A】书中的 `--insecure-port`、dockershim、部分 in-tree 云/存储插件与旧日志 flags 已退出；把未知参数交给新二进制会直接导致组件启动失败。升级前应先获取新旧二进制的 `--help`、阅读官方弃用指南，迁移到版本化 ComponentConfig，并在非生产控制面验证。对于 kubeadm 集群，还要让 kubeadm 管理的静态 Pod manifest 与 kubelet 配置保持一致，避免手改文件在升级时被覆盖。
+
 ---
 
 ## 四、可复现的现代本地实验环境
@@ -934,13 +1105,30 @@ VPA 并非“自动调大就结束”：推荐模式可先只观察建议；自�
 
 ### 4.1 安装并检查前置工具
 
-安装 Docker Desktop 或 Docker Engine，然后安装当前稳定版 `kubectl` 与 `kind`。确认：
+以下以 Windows 11 + PowerShell 为例。先在“管理员 PowerShell”启用 WSL 2；如果命令提示重启，重启后再继续：
 
-```bash
+```powershell
+wsl --install
+wsl --status
+```
+
+使用 Windows Package Manager 安装 Docker Desktop、`kubectl` 与 `kind`。`--exact` 避免同名包，两个 `--accept-*` 参数允许脚本化安装官方源中的包：
+
+```powershell
+winget install --id Docker.DockerDesktop --exact --accept-package-agreements --accept-source-agreements
+winget install --id Kubernetes.kubectl --exact --accept-package-agreements --accept-source-agreements
+winget install --id Kubernetes.kind --exact --accept-package-agreements --accept-source-agreements
+```
+
+启动 Docker Desktop，等待状态栏显示 Engine 正常运行。新开一个 PowerShell，确认 Docker 客户端能连接 Engine，且三个工具都能输出版本：
+
+```powershell
 docker version
 kubectl version --client
 kind version
 ```
+
+如果 `docker version` 只有 Client、Server 部分报连接错误，说明 Docker Desktop 尚未启动或 WSL 2 后端未就绪；此时不要继续创建集群。Linux 主机可按 Docker Engine、kubectl 和 kind 各自官方安装页安装，后续 YAML 与 `kind` 命令相同。
 
 ### 4.2 创建双 Worker 集群
 
@@ -1092,6 +1280,7 @@ kind delete cluster --name guide-lab
 | 10.7       | 叙述 Heapster 迁移到 Metrics Server                      | Heapster 已退出；Metrics Server 只服务资源指标 API，长期观测另建 Prometheus 等系统                           |
 | 10.11      | 同时介绍 Helm v2/Tiller 与 v3                            | 新部署只使用 Helm v3；Tiller 架构仅用于迁移旧 release                                                        |
 | 第 12 章   | Windows Server 2019、Docker EE 与旧 Flannel 脚本         | Windows 容器具有严格 OS build/运行时/CNI 兼容矩阵，应按目标 Kubernetes 版本官方支持表部署                    |
+| 附录 A     | 以 1.19 的 flags 汇总六类组件配置                         | 每次升级按目标二进制 `--help`、官方弃用指南和版本化 ComponentConfig 迁移；删除未知或已锁定的 feature gate    |
 
 这本书的最大时效风险不在理念，而在“命令和 API 看起来仍然熟悉”。Kubernetes 会长期保留声明式控制、Pod、Service、CRI/CNI/CSI 等思想，但 Beta API、feature gate、镜像地址、组件参数和插件生命周期变化很快。任何生产 YAML 都应先执行服务端 dry-run、schema 校验和版本升级检查。
 
@@ -1122,3 +1311,29 @@ kind delete cluster --name guide-lab
 需要带着版本意识阅读：书中目标是 Kubernetes 1.19，PSP、dockershim、GlusterFS/Heketi、旧 Beta API 和部分组件参数已经退出。但它对 Pod/Service 关系、List-Watch、调度、网络模型、PV/PVC 生命周期以及逐层排障的解释依然构成扎实基础。
 
 用最平实的话总结：**Kubernetes 不是一个“帮你运行 Docker 命令”的工具，而是一套让系统不断兑现声明的控制机制。学会它，不是记住最多的 YAML 字段，而是能沿着 API → Controller → Scheduler → kubelet → CRI/CNI/CSI → Service 的链路，解释每一个状态为什么出现，以及下一步该在哪里找证据。**
+
+---
+
+## 八、原书证据与现代核验来源
+
+### 8.1 原书依据
+
+- 龚正、吴治辉、闫健勇：《Kubernetes 权威指南：从 Docker 到 Kubernetes 实践全接触（第 5 版）》，电子工业出版社，2021 年 6 月，ISBN `978-7-121-40998-1`。
+- 本文逐页核对的电子版共 1682 个 PDF 页面对象；书签结构为推荐序、前言、第 1～12 章、附录 A 与封底。章节总表和第 3 部分的顺序据此建立。
+- 短引文来自 PDF 第 7 页内容简介、第 1 章、第 5 章和第 7 章。代码只保留理解机制所需的短例，并在正文中标明“原书示例整理”或“书外扩展”，未复刻大段正文。
+- 未发现可确认且可合法获取的更新版原书，因此第 5 版仍是书籍事实主线；版本更新只采用官方文档作对照，不使用来源不明的新副本。
+
+### 8.2 Kubernetes 官方资料（核验日期：2026-08-08）
+
+- [Kubernetes Releases](https://kubernetes.io/releases/) 与 [`stable.txt`](https://dl.k8s.io/release/stable.txt)：核对当前稳定分支 1.36 与最新补丁 1.36.3。
+- [Deprecated API Migration Guide](https://kubernetes.io/docs/reference/using-api/deprecation-guide/)：核对 Ingress、CRD、PSP 等旧 API 的删除边界。
+- [Dockershim Removal FAQ](https://kubernetes.io/blog/2022/02/17/dockershim-faq/)：核对内置 Docker 集成在 1.24 移除及 CRI 迁移方向。
+- [Pod Security Admission](https://kubernetes.io/docs/concepts/security/pod-security-admission/) 与 [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/)：核对 PSP 之后的内置策略模型。
+- [Secrets](https://kubernetes.io/docs/concepts/configuration/secret/) 与 [Encrypting Confidential Data at Rest](https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/)：核对 Base64、etcd 静态加密和安全实践。
+- [Service](https://kubernetes.io/docs/concepts/services-networking/service/)、[EndpointSlice](https://kubernetes.io/docs/concepts/services-networking/endpoint-slices/)、[Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/) 与 [Gateway API](https://gateway-api.sigs.k8s.io/)：核对服务发现和七层入口的现代边界。
+- [Cluster Networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/)、[Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)：核对 CNI 与策略实现责任。
+- [Volumes](https://kubernetes.io/docs/concepts/storage/volumes/)、[Persistent Volumes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) 与 [CSI Volume Cloning/Snapshot 相关文档](https://kubernetes.io/docs/concepts/storage/volume-snapshots/)：核对 in-tree 插件变化和 CSI 语义。
+- [Custom Resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)：核对 CRD、聚合 API 与 Controller 的职责边界。
+- [Component Tools](https://kubernetes.io/docs/reference/command-line-tools-reference/)：核对附录 A 中各组件 flags 的现代查询入口。
+- [Windows containers in Kubernetes](https://kubernetes.io/docs/concepts/windows/) 与 [Schedule GPUs](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/)：核对异构节点与 Device Plugin 边界。
+- [kind Quick Start](https://kind.sigs.k8s.io/docs/user/quick-start/)：核对第 4 部分本地实验环境的命令与用途边界。
