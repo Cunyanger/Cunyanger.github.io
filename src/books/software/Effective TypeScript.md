@@ -1,6 +1,6 @@
 ---
 title: Effective TypeScript 62 Specific Ways to Improve Your TypeScript
-date: 2026-08-10
+date: 2026-08-11
 article: false
 icon: pen-to-square
 bookCategory: TypeScript 与 JavaScript
@@ -21,9 +21,9 @@ excerpt: 以 Dan Vanderkam 的《Effective TypeScript》第一版 PDF 为主线�
 
 # 《Effective TypeScript》深度阅读
 
-> **书目信息**：Dan Vanderkam，_Effective TypeScript: 62 Specific Ways to Improve Your TypeScript_，O'Reilly Media，2020，ISBN 978-1-492-05374-3。本文的章节顺序、短引文、示例意图和 62 个 Item 均以题目提供的 PDF 为依据。
+> **书目信息**：Dan Vanderkam，_Effective TypeScript: 62 Specific Ways to Improve Your TypeScript_，O'Reilly Media，第一版 2019 年 11 月（版权页标注 Copyright © 2020），ISBN 978-1-492-05374-3。题目提供的 PDF 为第一版，共 264 页；本文的章节顺序、短引文、示例意图和 62 个 Item 均以该 PDF 的版权页、目录和正文为依据。
 >
-> **证据标记**：原书表示 PDF 正文直接讨论的内容；当前补充表示截至 2026-08-10 根据 TypeScript 官方文档、npm 发行信息或作者的更新页面核对的实践；纠正表示第一版中的工具或语法已经变化，不能照搬到今天。
+> **证据标记**：原书表示 PDF 正文直接讨论的内容；当前补充表示截至 2026-08-11 根据 TypeScript 官方文档、npm 发行信息或作者的更新页面核对的实践；纠正表示第一版中的工具或语法已经变化，不能照搬到今天。作者官网所列第二版（83 条建议）只用于版本对照，不替代题目指定的第一版正文。
 
 ## 一、先建立全书地图
 
@@ -82,6 +82,8 @@ TypeScript 的优势来自折中：它保留 JavaScript 的运行时和生态，
 | 第六章 | Type Declarations and @types | 依赖版本、公共 API 类型、TSDoc、this、条件类型、类型测试 | 让库的运行时、声明和编译器版本协同工作 |
 | 第七章 | Writing and Running Your Code | ECMAScript 特性、对象迭代、DOM 层级、可见性、source map | 优先选择标准运行时语义，正确调试生成后的 JS |
 | 第八章 | Migrating to TypeScript | 现代 JS、@ts-check、allowJs、依赖图迁移、noImplicitAny | 用渐进路线获得真实类型收益，而不是停在“能编译” |
+| 致谢 | Acknowledgments | 记录社区、同事和开源项目对各 Item 的反馈来源 | 解释建议的工程背景，但不增加新的 API 或语法 |
+| 索引 | Index | 按术语、类型工具和 Item 编号定位正文 | 用索引反向建立“问题 -> Item -> 解决策略”的查阅路径 |
 
 ## 三、连续精读：从模型到工程落地
 
@@ -342,12 +344,18 @@ function format(x: string | number) {
 原书：async/await 让错误传播和返回类型更清楚；Promise.all 用于独立任务并发，取消和超时仍需显式设计。
 
 ~~~ts
+interface User { id: string; name: string }
+declare function decodeUser(input: unknown): User;
+
 async function loadUser(id: string): Promise<User> {
   const response = await fetch('/users/' + id);
   if (!response.ok) throw new Error('HTTP ' + response.status);
-  return response.json() as Promise<User>;
+  const raw: unknown = await response.json();
+  return decodeUser(raw); // decodeUser 必须执行运行时校验
 }
 ~~~
+
+这里的 `decodeUser` 可以是手写类型守卫，也可以封装 Zod、Valibot 或 JSON Schema 解析器。原书强调的是“类型声明不会改变运行时”；直接把 `response.json()` 断言为 `User` 只能让编译器停止报告，不能证明服务器真的返回了该形状。
 
 ##### Item 26：理解上下文如何参与推断
 
@@ -595,9 +603,15 @@ function greet(name) { return 'Hello ' + name; }
 
 原书：允许隐式 any 会让 .ts 文件看似迁移成功却没有真正的类型信息。最后应开启 noImplicitAny（通常随 strict 开启），逐个处理回调参数、第三方声明和动态边界，而不是用全局 any 消除诊断。
 
+### 补充单元：前言、致谢与索引
+
+前言说明本书面向已经会写 JavaScript 或 TypeScript、但希望理解取舍和边界的读者，并解释 62 个 Item 采用“问题—示例—建议”的组织方式。致谢页列出了作者在 TypeScript 团队、开源项目和社区讨论中获得的反馈来源；它不是新的技术章节，但能说明部分 Item（例如结构类型、类型测试和 ECMAScript 特性）的问题背景来自真实工程。
+
+索引不是额外知识点，而是本书的检索接口。遇到“对象多了一个字段”应回到 Item 11，遇到“类型与运行时不一致”应联查 Item 3、5、34、40、42；这种按问题回溯 Item 的方式比按语法关键词搜索更接近作者的设计意图。
+
 ## 四、当前可复现的 TypeScript 环境（补充）
 
-以下步骤用于验证本文示例，不是原书 2020 年的工具版本。核验日期为 2026-08-10；本机 npm latest 为 TypeScript 7.0.2，beta 为 6.0.0-beta。生产项目应锁定版本并提交 lockfile，不要盲目跟随 latest。
+以下步骤用于验证本文示例，不是原书 2020 年的工具版本。核验日期为 2026-08-11；本次通过 `npm view typescript version` 核得 npm latest 为 TypeScript 7.0.2。生产项目应锁定版本并提交 lockfile，不要盲目跟随 latest。
 
 ### 1. 初始化项目
 
@@ -718,11 +732,11 @@ npx tsc --declaration --emitDeclarationOnly
 
 ### 原书
 
-- Dan Vanderkam，_Effective TypeScript: 62 Specific Ways to Improve Your TypeScript_，O'Reilly Media，2020，ISBN 978-1-492-05374-3；本文以题目提供的 PDF 版权页、目录、前言和第 1–8 章为主。
+- Dan Vanderkam，_Effective TypeScript: 62 Specific Ways to Improve Your TypeScript_，O'Reilly Media，第一版 2019 年 11 月（版权页标注 Copyright © 2020），ISBN 978-1-492-05374-3；本文以题目提供的 PDF 版权页、目录、前言和第 1–8 章为主。
 - [作者的 Effective TypeScript 网站](https://effectivetypescript.com/)：核对第二版已更新为 83 条建议，并区分第一版/第二版资源。
 - [作者 GitHub 示例仓库](https://github.com/danvk/effective-typescript)：用于核对书中示例的公开代码位置；本文只保留必要的短片段并做了现代语法改写。
 
-### 当前补充的一手资料（核验于 2026-08-10）
+### 当前补充的一手资料（核验于 2026-08-11）
 
 - [TypeScript 官方 Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
 - [TypeScript 官方 TSConfig Reference](https://www.typescriptlang.org/tsconfig/)

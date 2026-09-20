@@ -9,7 +9,7 @@ tag:
   - Flux
   - IoT
 isOriginal: true
-excerpt: 基于设备遥测数据场景，系统梳理 Spring Boot 接入 InfluxDB 的配置、写入、元数据查询、趋势曲线查询、Tag 级联筛选，以及按时间段求和、窗口聚合、多设备聚合等常用统计方法。
+excerpt: 基于设备遥测数据场景，系统梳理 Spring Boot 接入 InfluxDB 的配置、Point 写入、Flux 语法、元数据查询、趋势曲线查询、Tag 级联筛选，以及按时间段求和、窗口聚合、多设备聚合和能量积分等常用方法。
 ---
 
 # Spring Boot 使用 InfluxDB：设备时序数据写入、趋势查询与聚合统计
@@ -120,6 +120,303 @@ public class InfluxConfig {
 
 `InfluxDBClient` 是线程安全的，作为 Spring Bean 复用即可。
 
+## Flux 语法总览：每一段到底在做什么
+
+项目中的查询语言是 Flux。Flux 不是 SQL 的字符串替代品，而是一种“表流转换”语言：每个函数接收一个或多个表，返回新的表；`|>` 把上一步的结果传给下一步。理解“当前结果是什么表、group key 包含哪些列”，比记住函数名称更重要。
+
+### 1. 最小查询结构
+
+```flux
+from(bucket: "telemetry_48h")
+  |> range(start: -48h)
+  |> filter(fn: (r) => r._measurement == "bat")
+  |> filter(fn: (r) => r._field == "Soc")
+```
+
+逐句解释：
+
+| 语法 | 作用 | 使用注意 |
+|---|---|---|
+| `from(bucket: "...")` | 选择数据桶，返回原始表流 | bucket 名称必须来自可信配置；不要接受前端任意 bucket |
+| `|>` | 管道操作符，把左侧结果作为右侧函数的输入 | 每一步都可能改变列、行数和分组；调试时逐步执行 |
+| `range(start: ..., stop: ...)` | 限制时间范围，并生成 `_start`、`_stop` | 通常应尽早执行；`stop` 是右开边界，不能把它当成包含结束时刻 |
+| `filter(fn: (r) => ...)` | 按行过滤 | `r` 是当前行记录；tag、`_measurement`、`_field` 都是列 |
+
+Flux 的函数调用使用命名参数，例如 `range(start: -48h)`。字符串使用双引号，持续时间使用 `5m`、`1h`、`24h`，时间点可以使用 RFC3339 字符串或 `time(v: "...")`。
+
+```flux
+// 相对时间：最近 48 小时
+|> range(start: -48h)
+
+// 绝对时间：UTC 时间区间 [start, stop)
+|> range(
+  start: time(v: "2026-07-28T00:00:00Z"),
+  stop:  time(v: "2026-07-28T01:00:00Z")
+)
+```
+
+项目中的 `Instant` 会通过 `%s` 格式化成 UTC 时间；不要把服务器本地时区的日期字符串直接拼入 Flux。需要按澳洲业务日查询时，先在 Java 中用 `ZoneId` 算出 UTC 边界，再传给 `range`。
+
+### 2. `filter`：标签、measurement 和 field 的筛选
+
+```flux
+|> filter(fn: (r) =>
+  r._measurement == "mtr_grid" and
+  r._field == "Pt" and
+  r.gatewayId == "GW001" and
+  r.deviceId == "MTR-Grid-001"
+)
+```
+
+- `and`、`or`、`not` 是布尔运算符。
+- `==`、`!=`、`<`、`>`、`<=`、`>=` 是比较运算符。
+- 动态列名使用 `r["gatewayId"]`，适合项目中的 tag 级联筛选。
+- `r._field == "Pt"` 必须写出来，否则同一个 measurement 的多个 field 会混在一起。
+
+```flux
+// 多个字段或设备使用 contains
+|> filter(fn: (r) => contains(value: r._field, set: ["Pt", "Ea", "Etp"]))
+|> filter(fn: (r) => contains(value: r.deviceId, set: ["MTR-Grid-001", "MTR-Grid-002"]))
+```
+
+`contains` 的 `set` 是 Flux 数组，不是 SQL 的 `IN (...)`。数组过大时会让查询文本和执行计划变大，项目 API 应限制设备和字段数量，并使用白名单校验。
+
+### 3. `keep`、`drop`、`rename`：控制列集合
+
+```flux
+|> keep(columns: ["_time", "_value", "gatewayId", "deviceId", "deviceType"])
+|> rename(columns: {_value: "powerW"})
+```
+
+- `keep` 只保留列；适合接口返回前裁剪系统列和无关 tag。
+- `drop` 删除列；适合删除临时列。
+- `rename` 改列名；改名后后续函数必须使用新名称。
+
+项目中的 `keep` 是为了把 Flux 系统列和业务 tag 转成趋势 DTO。不要过早 `drop` `_time`、`_value`、`_field`，否则后续 `pivot`、`sum` 或 Java 映射可能失效。
+
+### 4. `sort`、`limit`、`first`、`last`：顺序与取样
+
+```flux
+|> sort(columns: ["_time"], desc: true)
+|> limit(n: 1)
+```
+
+这表示每个当前表取排序后的第一行。项目查询设备最新快照时不能只写 `last()`：`last()` 是按当前分组和指定列取最后一行，配合 `group(columns: ["_measurement", "deviceId"])` 才能得到每台设备的最新记录。
+
+```flux
+|> group(columns: ["_measurement", "deviceId"])
+|> sort(columns: ["_time"], desc: true)
+|> limit(n: 1)
+```
+
+`limit` 的 `n` 必须是非负整数。对没有排序的数据直接 `limit(1)`，结果不代表“最新”。
+
+### 5. `group` 与 group key：为什么结果会变多组
+
+InfluxDB 不是简单返回一张二维表，而是返回多个 table。每张 table 由 group key 标识。tag 通常会进入 group key，所以同一查询可能按 `gatewayId`、`deviceId` 分成很多组。
+
+```flux
+// 每个 deviceId 单独求和
+|> group(columns: ["deviceId"])
+|> sum()
+
+// 取消分组，所有设备合并为一组
+|> group()
+|> sum()
+```
+
+项目的“多个设备总和”必须显式 `group()`；项目的“按设备返回结果”则使用 `group(columns: ["deviceId"])`。如果忘记 `group()`，`sum()` 很可能返回多条结果；如果误用了 `group()`，又会丢失设备维度。
+
+### 6. 聚合函数和 `aggregateWindow`
+
+常用聚合函数：
+
+```flux
+|> sum()       // 当前表所有 _value 的和
+|> mean()      // 平均值
+|> min()       // 最小值
+|> max()       // 最大值
+|> count()     // 行数
+|> first()     // 时间序列中的第一条
+|> last()      // 时间序列中的最后一条
+|> median()    // 中位数
+```
+
+按窗口聚合：
+
+```flux
+|> aggregateWindow(every: 5m, fn: mean, createEmpty: false)
+```
+
+- `every: 5m`：窗口大小。
+- `fn: mean`：每个窗口执行的聚合函数，传函数名而不是 `mean()`。
+- `createEmpty: false`：无数据窗口不生成空行；图表通常更容易处理。
+
+项目中使用 `aggregateWindow(every: 30m, fn: last)` 先取每台设备半小时内最后一个功率，再按 `_time` 分组求和。这适合“半小时快照趋势”，不等于半小时能耗。瞬时功率计算 kWh 应使用时间积分，见后文 `integral`。
+
+### 7. `map`：逐行派生字段
+
+```flux
+|> map(fn: (r) => ({r with powerKw: r._value / 1000.0}))
+```
+
+`{r with ...}` 保留原行并添加/覆盖列。设备项目中可用它把 W 转为 kW，或计算功率因数、派生功率等。
+
+```flux
+|> filter(fn: (r) => exists r.Voltage and exists r.Current)
+|> map(fn: (r) => ({r with apparentPower: r.Voltage * r.Current}))
+```
+
+注意：字段缺失时直接访问可能报错或产生空结果，跨 field 计算前先用 `exists`。`map` 只改变行，不会自动把多个 field 变成列；要先 `pivot`。
+
+### 8. `pivot`：把 field 行转换为列
+
+Influx 一个点的每个 field 会成为一行记录。下面的 `pivot` 将同一时间的 `Voltage`、`Current` 变成两列：
+
+```flux
+|> pivot(
+  rowKey: ["_time"],
+  columnKey: ["_field"],
+  valueColumn: "_value"
+)
+```
+
+转换前大致是：
+
+```text
+_time       _field   _value
+10:00:00    Voltage  230
+10:00:00    Current  5
+```
+
+转换后大致是：
+
+```text
+_time       Voltage  Current
+10:00:00    230       5
+```
+
+项目的 `queryLatestByGateway` 就是先按 `measurement + deviceId` 分组，再 `pivot` 恢复设备快照。使用 `pivot` 时必须保证 rowKey 能唯一标识一组字段；如果同一时间存在重复点，可能产生多行或覆盖结果。
+
+### 9. `integral`：由功率计算能量
+
+```flux
+|> integral(unit: 1h)
+|> map(fn: (r) => ({r with _value: r._value / 1000.0}))
+```
+
+如果 `_value` 是 W，`integral(unit: 1h)` 得到 Wh，再除以 1000 得到 kWh。它按相邻点的时间间隔积分，适合采样间隔不固定的场景。
+
+注意：
+
+- 缺失数据会改变积分结果，不能把“无数据”当成 0 功率。
+- 负功率表示进口还是出口，要由设备协议确定；不能直接对功率取绝对值。
+- 如果设备已有累计电量表（例如项目中的 `Etp`、`Etn`），优先使用表底差值，并处理回卷、复位和单位换算。
+- `sum()` 瞬时功率只是数值相加，不是能量。
+
+### 10. `yield`：给一个查询返回多个命名结果
+
+```flux
+data = from(bucket: "telemetry_48h")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r._measurement == "bat")
+
+data |> filter(fn: (r) => r._field == "Soc") |> yield(name: "soc")
+data |> filter(fn: (r) => r._field == "Power") |> yield(name: "power")
+```
+
+`yield(name: ...)` 不改变数据，只是给结果命名，Java 客户端会收到多个 table/result。若接口只需要一组结果，可以省略 `yield`，Flux 会返回默认结果。
+
+### 11. Schema 元数据函数
+
+项目动态元数据接口使用 `influxdata/schema` 包：
+
+```flux
+import "influxdata/influxdb/schema"
+
+schema.measurements(bucket: "telemetry_48h")
+schema.fieldKeys(
+  bucket: "telemetry_48h",
+  predicate: (r) => r._measurement == "bat"
+)
+schema.tagKeys(
+  bucket: "telemetry_48h",
+  predicate: (r) => r._measurement == "bat"
+)
+schema.tagValues(
+  bucket: "telemetry_48h",
+  tag: "deviceId",
+  predicate: (r) => r._measurement == "bat" and r.gatewayId == "GW001"
+)
+```
+
+这些函数读取 schema/索引信息，不是普通数据聚合。它们通常需要 bucket 的读取权限；没有合适的 predicate 时可能扫描范围较大。项目中要过滤掉返回的 `_` 系统列，并对 measurement、tag key、tag value 做白名单和长度限制。
+
+### 12. `join`：关联两条时间序列
+
+当需要把两条序列按 tag 和时间关联时使用 `join`：
+
+```flux
+power = from(bucket: "telemetry_48h")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r._measurement == "mtr_grid" and r._field == "Pt")
+  |> rename(columns: {_value: "powerW"})
+
+voltage = from(bucket: "telemetry_48h")
+  |> range(start: -1h)
+  |> filter(fn: (r) => r._measurement == "mtr_grid" and r._field == "Va" )
+  |> rename(columns: {_value: "voltageV"})
+
+join(
+  tables: {power: power, voltage: voltage},
+  on: ["_time", "gatewayId", "deviceId"]
+)
+```
+
+`join` 要求连接键能够对齐。不同采样时间、不同窗口或不同 tag 值会导致数据匹配不上；高基数、大时间范围 join 也比较昂贵。设备趋势接口优先分别查询曲线，只有确实需要跨指标计算时才 join 或 pivot。
+
+### 13. 写入语法与查询语法的对应关系
+
+Java `Point`：
+
+```java
+Point.measurement("mtr_grid")
+    .addTag("gatewayId", "GW001")
+    .addTag("deviceId", "MTR-Grid-001")
+    .addField("Pt", 1200.0)
+    .time(timestamp, WritePrecision.MS);
+```
+
+对应的数据语义是：
+
+```text
+measurement = mtr_grid
+        tags        = gatewayId、deviceId（Taichi2.0 当前实现）
+field       = Pt
+time        = timestamp（毫秒）
+value       = 1200.0
+```
+
+项目的 `InfluxTimeSeriesGateway` 使用异步 `WriteApi`，并把 `Number` 转为 `double`。这会带来两个注意事项：
+
+- 设备属性字段名和值类型要稳定；同一 measurement/field 不要今天写数字、明天写字符串。
+- 金额、结算价格等需要精确小数的值不应只依赖 Influx 的 double；应在 MySQL 或业务层使用 `BigDecimal` 保存权威值。
+
+Influx 同一点的唯一性由 `measurement + tag set + timestamp` 决定。相同组合再次写入会合并/覆盖字段，不能把 `deviceId` 放在 field，否则无法正确区分设备，也无法有效过滤。
+
+### 14. 项目中的查询安全边界
+
+Flux 没有传统 JDBC 的参数占位符。项目目前通过 `escapeFluxString` 转义字符串，但“转义”不等于“允许任意查询”。生产代码还应：
+
+- `measurement`、`field`、tag key、聚合函数、`every` 使用白名单。
+- bucket 固定来自 `InfluxProperties`，不能从请求参数传入。
+- tag value 做长度限制，设备 ID 列表限制数量。
+- 时间范围限制最大跨度，避免前端一次查询全量历史。
+- 不把 token、完整原始响应和用户输入直接写日志。
+- `range`、`filter` 尽量放在前面；`pivot`、`join`、`group`、`sort` 放在过滤之后，降低中间数据量。
+
+项目配置中的 `telemetry_48h` 是 48 小时热数据桶；`InfluxService.save` 也会跳过超过 48 小时的上报。查询超出保留期自然不会得到完整数据，接口应明确返回数据覆盖范围，而不是把缺失点误认为设备没有上报。
+
 ## 设备数据模型设计
 
 一个设备上报示例可以设计为：
@@ -147,12 +444,12 @@ public class InfluxConfig {
 ```text
 bucket      telemetry_48h
 measurement bat
-tags        gatewayId=GW001, deviceId=BAT001, deviceType=BAT
+tags        gatewayId=GW001, deviceId=BAT-BAT001
 fields      Soc=89, Power=1200, Voltage=512.5
 time        1760000000000
 ```
 
-这里把 `deviceType` 映射为 measurement：
+这里把 `deviceType` 映射为 measurement。需要特别注意：Taichi2.0 当前实现写入的 `deviceId` 是 `device.getDeviceType() + "-" + device.getDeviceId()`，因此上面业务 payload 的 `BAT001` 最终会变成 tag `BAT-BAT001`；查询时必须使用落库后的值，不能直接拿原始设备 ID 拼条件。
 
 ```java
 private static final Map<String, String> DEVICE_TYPE_MEASUREMENT_MAP = Map.of(
@@ -254,6 +551,8 @@ public class InfluxService {
 - 数值统一写为 `double`，方便后续趋势和聚合查询。
 - 字符串 field 也可以写入，但趋势图和聚合统计通常只处理数值字段。
 
+上面的通用示例额外写入了 `deviceType` tag；Taichi2.0 当前 `InfluxService.toTimeSeriesPoint` 实际只写入 `gatewayId` 和组合后的 `deviceId`，measurement 已经承担设备类型区分。因此在这个项目中不要默认用 `deviceType` 作为过滤条件，除非同步修改写入模型并完成历史数据兼容。
+
 ## DTO 设计
 
 趋势查询可以抽象成几组 DTO：
@@ -328,17 +627,17 @@ public class DeviceTrendDTO {
 ```json
 [
   {
-    "name": "gatewayId=GW001, deviceId=BAT001",
+    "name": "gatewayId=GW001, deviceId=BAT-BAT001",
     "tags": [
       { "key": "gatewayId", "value": "GW001" },
-      { "key": "deviceId", "value": "BAT001" }
+      { "key": "deviceId", "value": "BAT-BAT001" }
     ]
   },
   {
-    "name": "gatewayId=GW001, deviceId=BAT002",
+    "name": "gatewayId=GW001, deviceId=BAT-BAT002",
     "tags": [
       { "key": "gatewayId", "value": "GW001" },
-      { "key": "deviceId", "value": "BAT002" }
+      { "key": "deviceId", "value": "BAT-BAT002" }
     ]
   }
 ]
@@ -595,7 +894,7 @@ private String buildTrendFlux(DeviceTrendDTO.Query query, List<DeviceTrendDTO.Ta
     }
 
     flux.append("""
-              |> keep(columns: ["_time", "_value", "gatewayId", "deviceId", "deviceType"])
+              |> keep(columns: ["_time", "_value", "gatewayId", "deviceId"])
               |> sort(columns: ["_time"])
             """);
     return flux.toString();
@@ -771,7 +1070,7 @@ from(bucket: "telemetry_48h")
   |> filter(fn: (r) => r._measurement == "bat")
   |> filter(fn: (r) => r._field == "Power")
   |> filter(fn: (r) => r.gatewayId == "GW001")
-  |> filter(fn: (r) => r.deviceId == "BAT001")
+  |> filter(fn: (r) => r.deviceId == "BAT-BAT001")
   |> sum()
 ```
 
@@ -959,7 +1258,7 @@ from(bucket: "telemetry_48h")
   |> filter(fn: (r) => r._measurement == "bat")
   |> filter(fn: (r) => r._field == "Power")
   |> filter(fn: (r) => r.gatewayId == "GW001")
-  |> filter(fn: (r) => contains(value: r.deviceId, set: ["BAT001", "BAT002", "BAT003"]))
+  |> filter(fn: (r) => contains(value: r.deviceId, set: ["BAT-BAT001", "BAT-BAT002", "BAT-BAT003"]))
   |> group()
   |> sum()
 ```
@@ -1152,7 +1451,7 @@ from(bucket: "telemetry_48h")
   |> range(start: time(v: "2026-07-28T00:00:00Z"), stop: time(v: "2026-07-28T01:00:00Z"))
   |> filter(fn: (r) => r._measurement == "bat")
   |> filter(fn: (r) => contains(value: r._field, set: ["Voltage", "Current"]))
-  |> filter(fn: (r) => r.deviceId == "BAT001")
+  |> filter(fn: (r) => r.deviceId == "BAT-BAT001")
   |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
   |> map(fn: (r) => ({ r with apparentPower: r.Voltage * r.Current }))
   |> sum(column: "apparentPower")
@@ -1179,7 +1478,7 @@ from(bucket: "telemetry_48h")
   |> range(start: time(v: "2026-07-28T00:00:00Z"), stop: time(v: "2026-07-28T01:00:00Z"))
   |> filter(fn: (r) => r._measurement == "bat")
   |> filter(fn: (r) => r._field == "Power")
-  |> filter(fn: (r) => r.deviceId == "BAT001")
+  |> filter(fn: (r) => r.deviceId == "BAT-BAT001")
   |> aggregateWindow(every: 1m, fn: mean, createEmpty: false)
   |> map(fn: (r) => ({ r with _value: r._value / 1000.0 / 60.0 }))
   |> sum()
@@ -1199,7 +1498,7 @@ from(bucket: "telemetry_48h")
   |> range(start: time(v: "2026-07-28T00:00:00Z"), stop: time(v: "2026-07-28T01:00:00Z"))
   |> filter(fn: (r) => r._measurement == "bat")
   |> filter(fn: (r) => r._field == "Power")
-  |> filter(fn: (r) => r.deviceId == "BAT001")
+  |> filter(fn: (r) => r.deviceId == "BAT-BAT001")
   |> integral(unit: 1h)
   |> map(fn: (r) => ({ r with _value: r._value / 1000.0 }))
 ```
@@ -1286,3 +1585,4 @@ Spring Boot 接入 InfluxDB 的核心步骤并不复杂：
 - 聚合统计根据业务选择 `sum()`、`mean()`、`aggregateWindow()`、`group()`、`pivot()` 或 `integral()`。
 
 在设备遥测场景中，推荐把设备标识类字段放 tag，把实时数值放 field，并为前端提供 metadata、field keys、tag keys、tag values 和 query 接口。这样前端可以完全动态地构建趋势查询和多曲线对比，不需要硬编码设备属性。
+
